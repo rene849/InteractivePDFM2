@@ -888,16 +888,20 @@ html.mobile .mobile-app{
 }
 html.mobile .mobile-app [hidden]{display:none !important;}
 
-/* Mobile Cover (matched to M1 & M5 mobile cover proportions & entrance animation) */
+/* Mobile Cover (exact M5 mobile cover balance: natural height, equal top/bottom breathing room) */
+html.mobile .mobile-app[data-view="cover"]{
+  min-height:0;
+  padding-bottom:0;
+}
 html.mobile .m-cover{
   display:none;
   flex-direction:column;
   align-items:stretch;
-  justify-content:space-between;
+  justify-content:flex-start;
   text-align:left;
   gap:0;
   padding:36px 20px 36px;
-  min-height:clamp(540px, 82svh, 640px);
+  min-height:0;
 }
 html.mobile .mobile-app[data-view="cover"] .m-cover{display:flex;}
 html.mobile .m-cover-title{
@@ -906,7 +910,7 @@ html.mobile .m-cover-title{
   font-weight:700;
   line-height:1.22;
   color:var(--ink);
-  margin:0 0 clamp(24px,8.5vw,36px);
+  margin:0 0 clamp(20px,8.6vw,32px);
   opacity:0;
   transform:translateY(48px);
 }
@@ -915,14 +919,14 @@ html.mobile .m-cover.go .m-cover-title{
 }
 html.mobile .m-cover-img{
   order:2;
-  width:74%;
-  max-width:290px;
+  width:76%;
+  max-width:300px;
   height:auto;
   display:block;
-  margin:auto;
+  margin:0 auto;
 }
 html.mobile .m-cover .m-btn{
-  margin-top:clamp(36px,13vw,56px);
+  margin-top:clamp(32px,13.4vw,50px);
   opacity:0;
   transform:translateY(36px);
 }
@@ -1094,9 +1098,9 @@ html.mobile .m-intro{
   transition:opacity .3s ease,visibility .3s ease;
 }
 html.mobile .m-intro.active{opacity:1;visibility:visible;}
-html.mobile .m-intro-card{position:relative;background:#fff;width:100%;max-width:420px;padding:64px 22px 28px;text-align:center;box-shadow:0 16px 48px rgba(0,0,0,.3);}
+html.mobile .m-intro-card{position:relative;background:#fff;width:100%;max-width:340px;padding:64px 18px 28px;text-align:center;box-shadow:0 16px 48px rgba(0,0,0,.3);}
 html.mobile .m-intro-badge{position:absolute;top:-50px;left:50%;transform:translateX(-50%);width:100px;height:100px;border-radius:50%;background:#fff;}
-html.mobile .m-intro-card p{font-size:15px;line-height:1.65;color:var(--ink);text-align:center;}
+html.mobile .m-intro-card p{font-size:15px;line-height:1.65;color:var(--ink);text-align:center;max-width:29ch;margin-left:auto;margin-right:auto;text-wrap:balance;}
 html.mobile .m-intro-card p + p{margin-top:16px;}
 html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padding:0 32px;}
 
@@ -1341,7 +1345,7 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
     <!-- Mobile header -->
     <header class="m-header" id="m-header">
       <nav class="m-header-buttons" aria-label="Interactive Navigation">
-        <button class="icon-btn" id="m-btn-home" type="button" aria-label="Home: return to the start">
+        <button class="icon-btn" id="m-btn-home" type="button" aria-label="Home: view instructions">
           <svg viewBox="0 0 33 33" aria-hidden="true" focusable="false">
             <path class="ring" d="M16.5,32.5a16,16,0,1,0-16-16,16,16,0,0,0,16,16"/>
             <polygon class="glyph" points="14.92 22.43 14.92 17.68 18.08 17.68 18.08 22.43 22.04 22.43 22.04 16.1 24.41 16.1 16.5 8.98 8.59 16.1 10.96 16.1 10.96 22.43 14.92 22.43"/>
@@ -1367,7 +1371,7 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
     <!-- Mobile slides (carousel) -->
     <main class="m-slides-view" id="m-slides-view">
       <div class="m-carousel" id="m-carousel" role="region" aria-roledescription="carousel" aria-label="Consequences of the US retreat">
-        <div id="m-slides" aria-live="polite"></div>
+        <div id="m-slides"></div>
       </div>
       <div class="m-controls" id="m-controls">
         <button class="m-nav-btn" id="m-prev" type="button" aria-label="Previous">
@@ -1392,8 +1396,8 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
       <div class="m-intro-card">
         <img class="m-intro-badge" src="Resources/PastedVector-34.svg" alt=""
           onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 84 84'><circle cx='42' cy='42' r='40' fill='%23EBE9E0'/><path d='M42 26 L29 37 L33 37 L33 53 L51 53 L51 37 L55 37 Z' fill='%232E45B8'/></svg>';">
-        <p>The decline of US dominance has<br>had significant repercussions<br>around the world.</p>
-        <p>Click through this interactive<br>infographic to explore some<br>of the consequences of the US’<br>retreat or non&#8209;intervention.</p>
+        <p>The decline of US dominance has had significant repercussions around the world.</p>
+        <p>Click through this interactive infographic to explore some of the consequences of the US’ retreat or non&#8209;intervention.</p>
         <button class="m-btn" id="m-intro-continue" type="button">Continue</button>
       </div>
     </div>
@@ -1503,10 +1507,18 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
     let modalOpener = null;
 
     function syncInert() {
-      const anyOpen = [introModal, contentModal, completionModal, biblioOverlay].some(el => el.classList.contains('active'));
-      bgRegions.forEach(el => {
+      const coverOpen = !coverView.classList.contains('hidden');
+      const anyModalOpen = [introModal, contentModal, completionModal, biblioOverlay].some(el => el.classList.contains('active'));
+      const headerEl = document.querySelector('.app-header');
+      const stageEl = document.querySelector('.stage-view');
+
+      if (coverView) {
+        if (anyModalOpen) coverView.setAttribute('inert', '');
+        else coverView.removeAttribute('inert');
+      }
+      [headerEl, stageEl].forEach(el => {
         if (!el) return;
-        if (anyOpen) el.setAttribute('inert', '');
+        if (coverOpen || anyModalOpen) el.setAttribute('inert', '');
         else el.removeAttribute('inert');
       });
     }
@@ -1783,6 +1795,7 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
     // 1. CLICK START: HIDE COVER, SLIDE/FADE MAP IN FROM LEFT TO RIGHT, ANIMATE PINS, SHOW INTRO MODAL
     document.getElementById('btn-start-cover').addEventListener('click', () => {
       coverView.classList.add('hidden');
+      syncInert();
       signalTop();
 
       const mapFrame = document.getElementById('map-canvas-frame');
@@ -1994,6 +2007,7 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
       completionModal.classList.remove('active');
       biblioOverlay.classList.remove('active');
       coverView.classList.add('hidden');
+      syncInert();
       const mapFrame = document.getElementById('map-canvas-frame');
       if (mapFrame) mapFrame.classList.add('map-enter');
       document.querySelectorAll('.pin-btn').forEach(p => p.classList.add('animated'));
@@ -2079,11 +2093,17 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
       root.classList.toggle('tablet', t === 'tablet');
       root.style.setProperty('--vp', usableH() + 'px');
 
+      var deskApp = document.getElementById('interactive-app');
+      var mobApp = document.getElementById('mobile-app');
       if (t === 'mobile') {
+        if (deskApp) deskApp.setAttribute('inert', '');
+        if (mobApp) mobApp.removeAttribute('inert');
         root.style.setProperty('--screen-min', 'auto');
         root.style.removeProperty('--frame-h');
         return;
       }
+      if (mobApp) mobApp.setAttribute('inert', '');
+      if (deskApp) deskApp.removeAttribute('inert');
 
       // Fluid height capped to usableH() & 660px max (matching M5), 578px baseline (matching M1)
       var cap = Math.max(520, usableH() - 48);
@@ -2113,6 +2133,7 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
       if (!r.classList.contains('pre')) return;
       fitScreens();
       r.classList.remove('pre');
+      syncInert();
       requestAnimationFrame(function () { requestAnimationFrame(function () { triggerCoverAnimation(); }); });
     }
     function _try() {
@@ -2306,10 +2327,37 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
       var deskBib = document.querySelector('.bib-body');
       if (deskBib) document.getElementById('m-biblio-body').innerHTML = deskBib.innerHTML;
 
+      function syncMobileInert() {
+        var v = app.getAttribute('data-view') || 'cover';
+        var modalOpen = intro.classList.contains('active') || complete.classList.contains('active');
+        var mCov = document.getElementById('m-cover');
+        var mHdr = document.getElementById('m-header');
+        var mSld = document.getElementById('m-slides-view');
+        var mBib = document.getElementById('m-biblio-view');
+
+        if (mCov) {
+          if (modalOpen || v !== 'cover') mCov.setAttribute('inert', '');
+          else mCov.removeAttribute('inert');
+        }
+        if (mHdr) {
+          if (modalOpen || v === 'cover') mHdr.setAttribute('inert', '');
+          else mHdr.removeAttribute('inert');
+        }
+        if (mSld) {
+          if (modalOpen || v !== 'slides') mSld.setAttribute('inert', '');
+          else mSld.removeAttribute('inert');
+        }
+        if (mBib) {
+          if (modalOpen || v !== 'biblio') mBib.setAttribute('inert', '');
+          else mBib.removeAttribute('inert');
+        }
+      }
+
       function setView(v) {
         app.setAttribute('data-view', v);
         biblioBtn.setAttribute('aria-pressed', v === 'biblio' ? 'true' : 'false');
         biblioBtn.setAttribute('aria-label', v === 'biblio' ? 'Back to infographic' : 'Open bibliography');
+        syncMobileInert();
       }
 
       function scrollToTop() {
@@ -2336,7 +2384,11 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
         nextBtn.disabled = n === ids.length - 1;
         viewed.add(ids[n]);
         if (viewed.size === ids.length && !completeShown) scheduleComplete();
-        if (userAction) scrollToTop();
+        if (userAction) {
+          var d = regionData[ids[n]];
+          if (d) announce('Slide ' + (n + 1) + ' of ' + ids.length + ': ' + d.title + '. ' + d.body);
+          scrollToTop();
+        }
       }
 
       function scheduleComplete() {
@@ -2345,13 +2397,19 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
         completeTimer = setTimeout(function () {
           if (app.getAttribute('data-view') !== 'slides') return;
           complete.classList.add('active');
+          syncMobileInert();
+          announce('You have completed this interactive infographic.');
           setTimeout(function () {
             try { document.getElementById('m-complete-card').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' }); } catch (e) {}
             document.getElementById('m-complete-exit').focus({ preventScroll: true });
           }, 350);
         }, 800);
       }
-      function hideComplete() { clearTimeout(completeTimer); complete.classList.remove('active'); }
+      function hideComplete() {
+        clearTimeout(completeTimer);
+        complete.classList.remove('active');
+        syncMobileInert();
+      }
 
       function resetAll() {
         viewed.clear();
@@ -2368,18 +2426,29 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
         setView('slides');
         go(0, false);
         intro.classList.add('active');
+        syncMobileInert();
         document.getElementById('m-intro-continue').focus({ preventScroll: true });
         signalTop();
       });
       document.getElementById('m-intro-continue').addEventListener('click', function () {
         intro.classList.remove('active');
+        syncMobileInert();
+        var d = regionData[ids[current]];
         var h = slideEls[current].querySelector('h2');
         if (h) h.focus({ preventScroll: true });
+        if (d) announce('Slide ' + (current + 1) + ' of ' + ids.length + ': ' + d.title + '. ' + d.body);
       });
       prevBtn.addEventListener('click', function () { go(current - 1, true); });
       nextBtn.addEventListener('click', function () { go(current + 1, true); });
 
-      document.getElementById('m-btn-home').addEventListener('click', resetAll);
+      document.getElementById('m-btn-home').addEventListener('click', function () {
+        hideComplete();
+        setView('slides');
+        intro.classList.add('active');
+        syncMobileInert();
+        document.getElementById('m-intro-continue').focus({ preventScroll: true });
+        signalTop();
+      });
       document.getElementById('m-btn-exit').addEventListener('click', resetAll);
       document.getElementById('m-complete-exit').addEventListener('click', resetAll);
 
@@ -2390,7 +2459,26 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
       });
       document.getElementById('m-complete-biblio').addEventListener('click', function () { hideComplete(); openBiblio(); });
       complete.addEventListener('click', function (e) { if (e.target === complete) hideComplete(); });
-      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') hideComplete(); });
+      document.addEventListener('keydown', function (e) {
+        var openM = [complete, intro].find(function (m) { return m.classList.contains('active'); });
+        if (!openM) return;
+        if (e.key === 'Escape') {
+          if (openM === complete) hideComplete();
+          else if (openM === intro) document.getElementById('m-intro-continue').click();
+          return;
+        }
+        if (e.key === 'Tab') {
+          var focusables = Array.from(openM.querySelectorAll('button,[tabindex]:not([tabindex="-1"])')).filter(function (el) { return el.offsetParent !== null; });
+          if (!focusables.length) return;
+          if (e.shiftKey && document.activeElement === focusables[0]) {
+            e.preventDefault();
+            focusables[focusables.length - 1].focus();
+          } else if (!e.shiftKey && document.activeElement === focusables[focusables.length - 1]) {
+            e.preventDefault();
+            focusables[0].focus();
+          }
+        }
+      });
       document.getElementById('m-back-top').addEventListener('click', scrollToTop);
 
       var sx = 0, sy = 0, tracking = false;
@@ -2412,6 +2500,7 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
       });
 
       go(0, false);
+      setView('cover');
     })();
   </script>
 </body>
