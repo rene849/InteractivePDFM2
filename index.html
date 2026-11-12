@@ -888,32 +888,46 @@ html.mobile .mobile-app{
 }
 html.mobile .mobile-app [hidden]{display:none !important;}
 
-/* Mobile Cover */
+/* Mobile Cover (matched to M1 & M5 mobile cover proportions & entrance animation) */
 html.mobile .m-cover{
   display:none;
   flex-direction:column;
   align-items:stretch;
-  justify-content:flex-start;
+  justify-content:space-between;
   text-align:left;
-  gap:24px;
-  padding:28px 20px 36px;
-  min-height:480px;
+  gap:0;
+  padding:36px 20px 36px;
+  min-height:clamp(540px, 82svh, 640px);
 }
 html.mobile .mobile-app[data-view="cover"] .m-cover{display:flex;}
 html.mobile .m-cover-title{
   order:1;
-  font-size:clamp(28px,9vw,40px);
+  font-size:clamp(32px,10.25vw,42px);
   font-weight:700;
-  line-height:1.2;
+  line-height:1.22;
   color:var(--ink);
+  margin:0 0 clamp(24px,8.5vw,36px);
+  opacity:0;
+  transform:translateY(48px);
+}
+html.mobile .m-cover.go .m-cover-title{
+  animation:titleFloatUp .85s cubic-bezier(.16,1,.3,1) .08s both;
 }
 html.mobile .m-cover-img{
   order:2;
-  width:72%;
-  max-width:280px;
+  width:74%;
+  max-width:290px;
   height:auto;
   display:block;
-  margin:4px auto 8px;
+  margin:auto;
+}
+html.mobile .m-cover .m-btn{
+  margin-top:clamp(36px,13vw,56px);
+  opacity:0;
+  transform:translateY(36px);
+}
+html.mobile .m-cover.go .m-btn{
+  animation:btnFloatUp .8s cubic-bezier(.16,1,.3,1) .24s both;
 }
 html.mobile .m-btn{
   order:3;
@@ -990,23 +1004,20 @@ html.mobile .m-map img.m-pin{
   filter:drop-shadow(0 2px 4px rgba(0,0,0,.35));
 }
 
-/* Mobile Carousel Controls (matched to original Hype controls & M5) */
+/* Mobile Carousel Controls (matched to original Hype controls: no bottom border, heavier stroke weight) */
 html.mobile .m-controls{
   display:flex;
   align-items:center;
   justify-content:center;
   gap:10px;
-  margin:18px auto 0;
-  padding-bottom:20px;
-  max-width:360px;
-  border-bottom:1px solid var(--rule);
+  margin:18px auto 8px;
 }
 html.mobile .m-nav-btn{
   width:44px;
   height:44px;
   flex:none;
   padding:0;
-  border:1px solid var(--blue);
+  border:1.5px solid var(--blue);
   border-radius:50%;
   background:#fff;
   color:var(--blue);
@@ -1026,7 +1037,7 @@ html.mobile .m-nav-btn:disabled{
 }
 html.mobile .m-dots{display:flex;align-items:center;gap:2px;}
 html.mobile .m-dot{width:22px;height:44px;padding:0;border:0;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;}
-html.mobile .m-dot::before{content:"";width:10px;height:10px;border-radius:50%;border:1px solid var(--blue);background:transparent;display:block;}
+html.mobile .m-dot::before{content:"";width:10px;height:10px;border-radius:50%;border:1.5px solid var(--blue);background:transparent;display:block;}
 html.mobile .m-dot[aria-current="true"]::before{width:11px;height:11px;background:var(--teal);border-color:var(--teal);}
 
 /* Mobile Completion Overlay */
@@ -1102,7 +1113,7 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
 
 @media(prefers-reduced-motion:reduce){
   html{scroll-behavior:auto;}
-  .view-cover.go .cover-title,.view-cover.go .btn-start,.map-canvas-frame,.map-canvas-frame.map-enter,.pin-btn.animated,.pin-btn.swiveling .pin-img,.m-slide.active{animation:none !important;opacity:1 !important;transform:none !important;}
+  .view-cover.go .cover-title,.view-cover.go .btn-start,.m-cover.go .m-cover-title,.m-cover.go .m-btn,.map-canvas-frame,.map-canvas-frame.map-enter,.pin-btn.animated,.pin-btn.swiveling .pin-img,.m-slide.active{animation:none !important;opacity:1 !important;transform:none !important;}
   .m-intro,.m-complete-overlay,.m-complete-card,.dark-overlay,.biblio-overlay{transition:none !important;}
 }
 </style>
@@ -1360,11 +1371,11 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
       </div>
       <div class="m-controls" id="m-controls">
         <button class="m-nav-btn" id="m-prev" type="button" aria-label="Previous">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
         <div class="m-dots" id="m-dots"></div>
         <button class="m-nav-btn" id="m-next" type="button" aria-label="Next">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
         </button>
       </div>
     </main>
@@ -1504,6 +1515,12 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
       coverView.classList.remove('go');
       void coverView.offsetWidth;
       coverView.classList.add('go');
+      const mCov = document.getElementById('m-cover');
+      if (mCov) {
+        mCov.classList.remove('go');
+        void mCov.offsetWidth;
+        mCov.classList.add('go');
+      }
     }
 
     // Tangent points from an external point (px, py) to a circle (cx, cy, r)
@@ -2343,6 +2360,7 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
         intro.classList.remove('active');
         go(0, false);
         setView('cover');
+        triggerCoverAnimation();
         signalTop();
       }
 
