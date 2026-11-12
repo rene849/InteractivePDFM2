@@ -488,41 +488,84 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;touch-acti
   border-radius:0;
   width:calc(960 * var(--u));
   max-width:92%;
-  padding:calc(28 * var(--u)) calc(44 * var(--u)) calc(36 * var(--u));
+  padding:clamp(18px, calc(24 * var(--u)), 28px) clamp(22px, calc(40 * var(--u)), 44px) clamp(20px, calc(32 * var(--u)), 36px);
   box-shadow:0 16px 48px rgba(0,0,0,.3),0 2px 10px rgba(0,0,0,.12);
   position:relative;
   z-index:315;
 }
 
+.dialog-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  border-bottom:1px solid var(--rule);
+  padding-bottom:12px;
+  margin-bottom:14px;
+}
+
 .dialog-card h2{
   font-size:clamp(18px, calc(24 * var(--u)), 24px);
   color:var(--ink);
-  margin-bottom:calc(16 * var(--u));
+  margin:0;
   font-weight:700;
   line-height:1.25;
-  border-bottom:1px solid var(--rule);
-  padding-bottom:calc(12 * var(--u));
-  padding-right:44px;
+  flex:1 1 auto;
+  min-width:0;
 }
 
 .dialog-card p{
-  font-size:clamp(14px, calc(15 * var(--u) * var(--fs,1)), 16px);
+  font-size:max(15px, calc(15 * var(--u) * var(--fs,1)));
   color:var(--ink);
-  line-height:1.65;
+  line-height:1.6;
 }
 .dialog-card p.is-scrollable{
   overflow-y:auto;
-  padding-right:calc(10 * var(--u));
+  padding-right:10px;
 }
+.dialog-card p.is-clamped{
+  overflow:hidden;
+  -webkit-mask-image:linear-gradient(#000 calc(100% - 3.2em),transparent);
+  mask-image:linear-gradient(#000 calc(100% - 3.2em),transparent);
+}
+
+/* M1-aligned Read more button (shown only when Yemen overflows in narrow two-menu widths) */
+.card-more{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  margin-top:12px;
+  padding:0 18px;
+  min-height:44px;
+  background:#fff;
+  border:1.5px solid var(--blue);
+  border-radius:4px;
+  color:var(--blue);
+  font:inherit;
+  font-size:15px;
+  font-weight:700;
+  cursor:pointer;
+  transition:background .1s,border-color .1s;
+}
+.card-more[hidden]{display:none;}
+@media(hover:hover){.card-more:hover{background:#e6eaee;}}
+.card-more:focus-visible{background:#e6eaee;}
+.card-more:active{background:#fff;border-color:var(--teal);border-width:2px;padding:0 17.5px;}
+.card-more svg{width:12px;height:8px;transition:transform .15s;}
+.card-more[aria-expanded="true"] svg{transform:rotate(180deg);}
 
 .close-card-btn{
   position:absolute;
-  top:calc(20 * var(--u));
-  right:calc(20 * var(--u));
+  top:20px;
+  right:20px;
   width:var(--icon);
   height:var(--icon);
   cursor:pointer;
   z-index:10;
+}
+.dialog-head .close-card-btn{
+  position:static;
+  flex:none;
 }
 
 /* Left-aligned regional spotlight layouts */
@@ -552,7 +595,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;touch-acti
 }
 .spotlight-view-container.layout-left.turkey-layout .dialog-card h2{
   white-space:nowrap;
-  font-size:clamp(16px, calc(21 * var(--u)), 21px);
+  font-size:clamp(18px, calc(22 * var(--u)), 22px);
 }
 .spotlight-view-container.layout-left.card-wide .dialog-card{left:8.5%;width:45%;bottom:16%;}
 .spotlight-view-container.layout-left.card-wider .dialog-card{left:5.5%;width:50.5%;bottom:16%;}
@@ -1156,14 +1199,17 @@ html.mobile .m-intro-card .m-btn{margin-top:22px;width:100%;}
 
           <!-- DIALOG CARD -->
           <div class="dialog-card">
-            <button class="icon-btn close-card-btn" id="close-dialog-btn" aria-label="Close region details">
-              <svg viewBox="0 0 32.83 32.83" aria-hidden="true" focusable="false">
-                <path class="ring" d="M16.41,32.33A15.92,15.92,0,1,0,.5,16.41,15.92,15.92,0,0,0,16.41,32.33"/>
-                <path class="xglyph" d="M22.02,10.8L10.81,22.02M10.81,10.8L22.02,22.02"/>
-              </svg>
-            </button>
-            <h2 id="card-title">The invasion of Crimea and eastern Ukraine</h2>
+            <div class="dialog-head">
+              <h2 id="card-title">The invasion of Crimea and eastern Ukraine</h2>
+              <button class="icon-btn close-card-btn" id="close-dialog-btn" aria-label="Close region details">
+                <svg viewBox="0 0 32.83 32.83" aria-hidden="true" focusable="false">
+                  <path class="ring" d="M16.41,32.33A15.92,15.92,0,1,0,.5,16.41,15.92,15.92,0,0,0,16.41,32.33"/>
+                  <path class="xglyph" d="M22.02,10.8L10.81,22.02M10.81,10.8L22.02,22.02"/>
+                </svg>
+              </button>
+            </div>
             <p id="card-body"></p>
+            <button type="button" class="card-more" id="cardMore" aria-expanded="false" aria-controls="card-body" hidden><span id="cardMoreLabel">Read more</span><svg viewBox="0 0 12 8" aria-hidden="true" focusable="false"><path d="M1 1.5l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
           </div>
         </div>
       </div>
@@ -1523,11 +1569,18 @@ html.mobile .m-intro-card .m-btn{margin-top:22px;width:100%;}
 
     const FS_MAX = 1.04, FS_STEP = 0.01, FS_TARGET_MIN = 1.0;
     let globalFs = null;
+    let cardExpanded = false;
+    let currentRegionId = null;
 
     function clearScroll() {
       cardBody.style.maxHeight = '';
-      cardBody.classList.remove('is-scrollable');
+      cardBody.classList.remove('is-scrollable', 'is-clamped');
       cardBody.removeAttribute('tabindex');
+      const moreBtn = document.getElementById('cardMore');
+      if (moreBtn) {
+        moreBtn.hidden = true;
+        moreBtn.setAttribute('aria-expanded', 'false');
+      }
     }
     function setRegionContent(id) {
       const d = regionData[id];
@@ -1591,13 +1644,48 @@ html.mobile .m-intro-card .m-btn{margin-top:22px;width:100%;}
       alignSpotlightToPin(pin);
 
       if (isLeft) {
+        const isYemen = spotlightContainer.classList.contains('yemen-layout');
+        const moreBtn = document.getElementById('cardMore');
+        const moreLab = document.getElementById('cardMoreLabel');
         const maxH = app.getBoundingClientRect().height - 2 * edgeMargin();
-        if (card.offsetHeight > maxH + 0.5) {
-          const fixed = card.offsetHeight - cardBody.offsetHeight;
-          cardBody.style.maxHeight = Math.max(80, maxH - fixed) + 'px';
-          cardBody.classList.add('is-scrollable');
-          cardBody.tabIndex = 0;
+
+        if (isYemen && cardExpanded && moreBtn) {
+          moreBtn.hidden = false;
+          moreBtn.setAttribute('aria-expanded', 'true');
+          if (moreLab) moreLab.textContent = 'Show less';
+          moreBtn.setAttribute('aria-label', 'Show less: ' + cardTitle.textContent);
+          // Expand container height cleanly if needed so all Yemen text is visible without scrollbar
           alignSpotlightToPin(pin);
+          const neededH = Math.ceil(card.offsetHeight + 2 * edgeMargin());
+          if (neededH > app.offsetHeight) {
+            app.style.height = neededH + 'px';
+            alignSpotlightToPin(pin);
+          }
+        } else {
+          app.style.height = '';
+          alignSpotlightToPin(pin);
+          if (card.offsetHeight > maxH + 0.5) {
+            if (isYemen && moreBtn) {
+              moreBtn.hidden = false;
+              moreBtn.setAttribute('aria-expanded', 'false');
+              if (moreLab) moreLab.textContent = 'Read more';
+              moreBtn.setAttribute('aria-label', 'Read more: ' + cardTitle.textContent);
+              const fixed = card.offsetHeight - cardBody.offsetHeight;
+              const avail = Math.max(96, maxH - fixed);
+              // Snap cut cleanly between lines (M1 style)
+              const lh = parseFloat(getComputedStyle(cardBody).lineHeight) || 24;
+              const lines = Math.max(3, Math.floor(avail / lh));
+              cardBody.style.maxHeight = Math.round(lines * lh) + 'px';
+              cardBody.classList.add('is-clamped');
+              alignSpotlightToPin(pin);
+            } else {
+              const fixed = card.offsetHeight - cardBody.offsetHeight;
+              cardBody.style.maxHeight = Math.max(80, maxH - fixed) + 'px';
+              cardBody.classList.add('is-scrollable');
+              cardBody.tabIndex = 0;
+              alignSpotlightToPin(pin);
+            }
+          }
         }
       } else {
         const a = app.getBoundingClientRect();
@@ -1694,6 +1782,9 @@ html.mobile .m-intro-card .m-btn{margin-top:22px;width:100%;}
           spotlightContainer.className = "spotlight-view-container " + (data.layoutClass || "");
 
           activePin = e.currentTarget;
+          currentRegionId = id;
+          cardExpanded = false;
+          document.getElementById('interactive-app').style.height = '';
           contentModal.classList.add('active');
           syncInert();
           fitAndAlign(activePin);
@@ -1720,6 +1811,8 @@ html.mobile .m-intro-card .m-btn{margin-top:22px;width:100%;}
         }, 600);
       }
 
+      cardExpanded = false;
+      document.getElementById('interactive-app').style.height = '';
       contentModal.classList.remove('active');
       syncInert();
       
@@ -1739,6 +1832,12 @@ html.mobile .m-intro-card .m-btn{margin-top:22px;width:100%;}
         if (nextUnviewed) nextUnviewed.focus({ preventScroll: true });
       }
     }
+
+    document.getElementById('cardMore').addEventListener('click', () => {
+      cardExpanded = !cardExpanded;
+      if (window.ceSettle) window.ceSettle();
+      if (activePin) fitAndAlign(activePin);
+    });
 
     document.getElementById('close-dialog-btn').addEventListener('click', closeSpotlightDialog);
 
