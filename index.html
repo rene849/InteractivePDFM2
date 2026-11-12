@@ -1004,20 +1004,20 @@ html.mobile .m-map img.m-pin{
   filter:drop-shadow(0 2px 4px rgba(0,0,0,.35));
 }
 
-/* Mobile Carousel Controls (matched to original Hype controls: no bottom border, heavier stroke weight) */
+/* Mobile Carousel Controls (exact match to original Hype controls: 48px 1px-ring buttons, larger bold 22px chevrons, 11px dots) */
 html.mobile .m-controls{
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:10px;
+  gap:12px;
   margin:18px auto 8px;
 }
 html.mobile .m-nav-btn{
-  width:44px;
-  height:44px;
+  width:48px;
+  height:48px;
   flex:none;
   padding:0;
-  border:1.5px solid var(--blue);
+  border:1px solid var(--blue);
   border-radius:50%;
   background:#fff;
   color:var(--blue);
@@ -1027,7 +1027,7 @@ html.mobile .m-nav-btn{
   cursor:pointer;
   -webkit-tap-highlight-color:transparent;
 }
-html.mobile .m-nav-btn svg{width:18px;height:18px;display:block;}
+html.mobile .m-nav-btn svg{width:22px;height:22px;display:block;}
 html.mobile .m-nav-btn:active:not(:disabled){background:var(--tint);border-color:var(--teal);}
 html.mobile .m-nav-btn:disabled{
   border-color:#C6CEEC;
@@ -1035,9 +1035,9 @@ html.mobile .m-nav-btn:disabled{
   opacity:1;
   cursor:default;
 }
-html.mobile .m-dots{display:flex;align-items:center;gap:2px;}
-html.mobile .m-dot{width:22px;height:44px;padding:0;border:0;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;}
-html.mobile .m-dot::before{content:"";width:10px;height:10px;border-radius:50%;border:1.5px solid var(--blue);background:transparent;display:block;}
+html.mobile .m-dots{display:flex;align-items:center;gap:0;}
+html.mobile .m-dot{width:21px;height:48px;padding:0;border:0;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;}
+html.mobile .m-dot::before{content:"";width:11px;height:11px;border-radius:50%;border:1px solid var(--blue);background:transparent;display:block;}
 html.mobile .m-dot[aria-current="true"]::before{width:11px;height:11px;background:var(--teal);border-color:var(--teal);}
 
 /* Mobile Completion Overlay */
@@ -1371,11 +1371,11 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
       </div>
       <div class="m-controls" id="m-controls">
         <button class="m-nav-btn" id="m-prev" type="button" aria-label="Previous">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.9" stroke-linecap="butt" stroke-linejoin="miter" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
         <div class="m-dots" id="m-dots"></div>
         <button class="m-nav-btn" id="m-next" type="button" aria-label="Next">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.9" stroke-linecap="butt" stroke-linejoin="miter" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
         </button>
       </div>
     </main>
