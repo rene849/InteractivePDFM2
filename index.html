@@ -543,13 +543,17 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;touch-acti
 .spotlight-view-container.layout-left.turkey-layout .dialog-card{
   position:absolute;
   left:6.7%;
-  bottom:21% !important;
+  bottom:15% !important;
   top:auto !important;
-  width:43%;
+  width:45.5%;
   max-width:none;
 }
-.spotlight-view-container.layout-left.card-wide .dialog-card{width:45%;bottom:16%;}
-.spotlight-view-container.layout-left.card-wider .dialog-card{width:52.5%;bottom:12%;}
+.spotlight-view-container.layout-left.turkey-layout .dialog-card h2{
+  white-space:nowrap;
+  font-size:clamp(17px, calc(22 * var(--u)), 22px);
+}
+.spotlight-view-container.layout-left.card-wide .dialog-card{left:8.5%;width:45%;bottom:16%;}
+.spotlight-view-container.layout-left.card-wider .dialog-card{left:5.5%;width:50.5%;bottom:16%;}
 .spotlight-view-container.layout-left.yemen-layout .dialog-card{left:1.7%;width:50%;bottom:12%;}
 .spotlight-view-container.layout-left.wedge-outer .dialog-card{bottom:12%;}
 
@@ -1038,7 +1042,7 @@ html.mobile .m-intro-card .m-btn{margin-top:22px;width:100%;}
           <span class="sub-title">When the cat’s away</span>
         </div>
         <nav class="header-buttons" aria-label="Interactive Navigation">
-          <button class="icon-btn" id="btn-reset" aria-label="Home: return to the map">
+          <button class="icon-btn" id="btn-reset" aria-label="Home: view instructions on the map">
             <svg viewBox="0 0 33 33" aria-hidden="true" focusable="false">
               <path class="ring" d="M16.5,32.5a16,16,0,1,0-16-16,16,16,0,0,0,16,16"/>
               <polygon class="glyph" points="14.92 22.43 14.92 17.68 18.08 17.68 18.08 22.43 22.04 22.43 22.04 16.1 24.41 16.1 16.5 8.98 8.59 16.1 10.96 16.1 10.96 22.43 14.92 22.43"/>
@@ -1449,11 +1453,11 @@ html.mobile .m-intro-card .m-btn{margin-top:22px;width:100%;}
         card.style.top = Math.max(top, em) + 'px';
         card.style.bottom = 'auto';
       } else if (spotlightContainer.classList.contains('turkey-layout')) {
-        const tTop = Math.min(cy - 0.025 * app.offsetWidth, app.offsetHeight - em - card.offsetHeight);
+        const tTop = Math.min(cy + 0.045 * app.offsetWidth, app.offsetHeight - em - card.offsetHeight);
         card.style.setProperty('top', Math.max(tTop, em) + 'px', 'important');
         card.style.setProperty('bottom', 'auto', 'important');
       } else if (spotlightContainer.classList.contains('indiachina-layout') || spotlightContainer.classList.contains('southchina-layout')) {
-        const lift = spotlightContainer.classList.contains('southchina-layout') ? 0.007 : 0.004;
+        const lift = spotlightContainer.classList.contains('southchina-layout') ? 0.034 : -0.022;
         const iTop = Math.min(cy - lift * app.offsetWidth, app.offsetHeight - em - card.offsetHeight);
         card.style.top = Math.max(iTop, em) + 'px';
         card.style.bottom = 'auto';
@@ -1509,9 +1513,10 @@ html.mobile .m-intro-card .m-btn{margin-top:22px;width:100%;}
       const beamRect = beam.getBoundingClientRect();
       const appRect = app.getBoundingClientRect();
       const beamTop = beamRect.height > 0 ? (beamRect.top - appRect.top) : (app.clientHeight * 0.33);
+      const cy = beamTop + size * 0.24;
 
       circle.style.setProperty('--cx', cx + 'px');
-      circle.style.setProperty('--cy', beamTop + 'px');
+      circle.style.setProperty('--cy', cy + 'px');
     }
 
     const FS_MAX = 1.04, FS_STEP = 0.01, FS_TARGET_MIN = 1.0;
@@ -1601,7 +1606,8 @@ html.mobile .m-intro-card .m-btn{margin-top:22px;width:100%;}
         if (shift > 0) stack.style.transform = 'translateY(' + shift + 'px)';
         const beamRect = beam.getBoundingClientRect();
         const beamTop = beamRect.top - a.top;
-        circle.style.setProperty('--cy', beamTop + 'px');
+        const size = circle.offsetWidth || 132;
+        circle.style.setProperty('--cy', (beamTop + size * 0.24) + 'px');
       }
     }
 
@@ -1782,8 +1788,20 @@ html.mobile .m-intro-card .m-btn{margin-top:22px;width:100%;}
       signalTop();
     }
 
+    function openInstructionsOnMap() {
+      contentModal.classList.remove('active');
+      completionModal.classList.remove('active');
+      biblioOverlay.classList.remove('active');
+      coverView.classList.add('hidden');
+      document.querySelectorAll('.pin-btn').forEach(p => p.classList.add('animated'));
+      introModal.classList.add('active');
+      syncInert();
+      document.getElementById('intro-continue-btn').focus({ preventScroll: true });
+      signalTop();
+    }
+
     document.getElementById('completion-exit-btn').addEventListener('click', resetToCover);
-    document.getElementById('btn-reset').addEventListener('click', resetToCover);
+    document.getElementById('btn-reset').addEventListener('click', openInstructionsOnMap);
     document.getElementById('btn-exit').addEventListener('click', resetToCover);
 
     // Backdrop click & Escape / Tab focus trap for modals (aligned to M1 & M5)
