@@ -99,25 +99,27 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;touch-acti
   max-width:max-content;
   display:flex;
   flex-direction:column;
-  gap:24px;
+  align-items:flex-start;
+  gap:0;
   z-index:2;
 }
 .cover-title{
   font-size:clamp(30px,4.1vw,48px);
   font-weight:700;
   color:var(--ink);
-  line-height:1.25;
+  line-height:1.35;
   letter-spacing:0;
   white-space:nowrap;
+  margin:0 0 1em;
   opacity:0;
-  transform:translateY(28px);
+  transform:translateY(32px);
 }
 .view-cover.go .cover-title{
   animation:slideUpFade .65s cubic-bezier(.16,1,.3,1) .1s both;
 }
 .btn-start{
   align-self:flex-start;
-  min-width:152px;
+  min-width:156px;
   height:48px;
   padding:0 28px;
   display:inline-flex;
@@ -131,9 +133,9 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;touch-acti
   font-weight:700;
   border-radius:4px;
   cursor:pointer;
-  transition:background .15s,box-shadow .15s;
+  transition:background .18s,box-shadow .15s;
   opacity:0;
-  transform:translateY(28px);
+  transform:translateY(32px);
 }
 .view-cover.go .btn-start{
   animation:slideUpFade .65s cubic-bezier(.16,1,.3,1) .25s both;
@@ -157,7 +159,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;touch-acti
 }
 
 @keyframes slideUpFade{
-  0%{opacity:0;transform:translateY(28px);}
+  0%{opacity:0;transform:translateY(32px);}
   100%{opacity:1;transform:translateY(0);}
 }
 
@@ -253,8 +255,6 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;touch-acti
 .icon-btn:focus-visible{--ring:var(--navy);--ring-fill:var(--tint);--glyph:var(--navy);}
 .icon-btn:active{--ring:var(--teal);--ring-fill:transparent;--glyph:var(--navy);}
 
-/* Desktop hides Home icon (Close/X returns to cover), matching M1 & M5 */
-html:not(.mobile) #btn-reset{display:none;}
 
 /* ========================================================= */
 /* 3. STAGE & WORLD MAP                                      */
@@ -495,7 +495,7 @@ html:not(.mobile) #btn-reset{display:none;}
 }
 
 .dialog-card h2{
-  font-size:calc(23.2 * var(--u) * (1 + (var(--fs,1) - 1) * 0.5));
+  font-size:clamp(18px, calc(24 * var(--u)), 24px);
   color:var(--ink);
   margin-bottom:calc(16 * var(--u));
   font-weight:700;
@@ -506,7 +506,7 @@ html:not(.mobile) #btn-reset{display:none;}
 }
 
 .dialog-card p{
-  font-size:calc(14.5 * var(--u) * var(--fs,1));
+  font-size:clamp(14px, calc(15 * var(--u) * var(--fs,1)), 16px);
   color:var(--ink);
   line-height:1.65;
 }
@@ -1038,7 +1038,7 @@ html.mobile .m-intro-card .m-btn{margin-top:22px;width:100%;}
           <span class="sub-title">When the cat’s away</span>
         </div>
         <nav class="header-buttons" aria-label="Interactive Navigation">
-          <button class="icon-btn" id="btn-reset" aria-label="Home: return to the start">
+          <button class="icon-btn" id="btn-reset" aria-label="Home: return to the map">
             <svg viewBox="0 0 33 33" aria-hidden="true" focusable="false">
               <path class="ring" d="M16.5,32.5a16,16,0,1,0-16-16,16,16,0,0,0,16,16"/>
               <polygon class="glyph" points="14.92 22.43 14.92 17.68 18.08 17.68 18.08 22.43 22.04 22.43 22.04 16.1 24.41 16.1 16.5 8.98 8.59 16.1 10.96 16.1 10.96 22.43 14.92 22.43"/>
@@ -1514,7 +1514,7 @@ html.mobile .m-intro-card .m-btn{margin-top:22px;width:100%;}
       circle.style.setProperty('--cy', beamTop + 'px');
     }
 
-    const FS_MAX = 1.24, FS_STEP = 0.02, FS_TARGET_MIN = 1.12;
+    const FS_MAX = 1.04, FS_STEP = 0.01, FS_TARGET_MIN = 1.0;
     let globalFs = null;
 
     function clearScroll() {
@@ -1892,7 +1892,7 @@ html.mobile .m-intro-card .m-btn{margin-top:22px;width:100%;}
       if (!r.classList.contains('pre')) return;
       fitScreens();
       r.classList.remove('pre');
-      triggerCoverAnimation();
+      requestAnimationFrame(function () { triggerCoverAnimation(); });
     }
     function _try() {
       if (_fr && _vp) _rd();
