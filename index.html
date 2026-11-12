@@ -542,15 +542,17 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;touch-acti
 }
 .spotlight-view-container.layout-left.turkey-layout .dialog-card{
   position:absolute;
-  left:6.7%;
+  left:4.5%;
   bottom:15% !important;
   top:auto !important;
-  width:45.5%;
+  width:43.5%;
   max-width:none;
+  padding-left:calc(36 * var(--u));
+  padding-right:calc(36 * var(--u));
 }
 .spotlight-view-container.layout-left.turkey-layout .dialog-card h2{
   white-space:nowrap;
-  font-size:clamp(17px, calc(22 * var(--u)), 22px);
+  font-size:clamp(16px, calc(21 * var(--u)), 21px);
 }
 .spotlight-view-container.layout-left.card-wide .dialog-card{left:8.5%;width:45%;bottom:16%;}
 .spotlight-view-container.layout-left.card-wider .dialog-card{left:5.5%;width:50.5%;bottom:16%;}
@@ -1179,7 +1181,7 @@ html.mobile .m-intro-card .m-btn{margin-top:22px;width:100%;}
         <img src="Resources/PastedVector-6.svg" alt="" class="completion-illustration">
         <h2>You have completed this interactive infographic.<br>What would you like to do next?</h2>
         <div class="completion-buttons">
-          <button class="action-btn" id="completion-exit-btn">Finish</button>
+          <button class="action-btn" id="completion-exit-btn">Exit</button>
           <button class="action-btn btn-outline" id="completion-biblio-btn">View bibliography</button>
         </div>
       </div>
@@ -1643,8 +1645,11 @@ html.mobile .m-intro-card .m-btn{margin-top:22px;width:100%;}
     document.getElementById('intro-continue-btn').addEventListener('click', () => {
       introModal.classList.remove('active');
       syncInert();
-      const firstPin = document.querySelector('.pin-btn');
-      if (firstPin) firstPin.focus({ preventScroll: true });
+      const stage = document.querySelector('.stage-view');
+      if (stage) {
+        stage.setAttribute('tabindex', '-1');
+        stage.focus({ preventScroll: true });
+      }
       announce('Interactive map ready. Select any highlighted country pin to explore.');
     });
 
@@ -1674,7 +1679,7 @@ html.mobile .m-intro-card .m-btn{margin-top:22px;width:100%;}
 
       pin.addEventListener('mouseenter', showHl);
       pin.addEventListener('mouseleave', hideHl);
-      pin.addEventListener('focus', showHl);
+      pin.addEventListener('focus', () => { if (pin.matches(':focus-visible')) showHl(); });
       pin.addEventListener('blur', hideHl);
 
       pin.addEventListener('click', (e) => {
