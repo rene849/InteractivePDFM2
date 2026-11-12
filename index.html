@@ -684,7 +684,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;touch-acti
   display:block;
 }
 
-.center-modal h2{
+.center-modal .modal-copy{
   font-size:16px;
   color:var(--ink);
   margin:0 auto 24px;
@@ -1072,7 +1072,7 @@ html.mobile .m-complete-card{
 }
 html.mobile .m-complete-overlay.active .m-complete-card{opacity:1;transform:none;transition-delay:.25s;}
 html.mobile .m-complete-card img{width:100%;max-width:260px;height:auto;display:block;margin:0 auto 24px;}
-html.mobile .m-complete-card h3{font-size:17px;line-height:1.5;font-weight:400;color:var(--ink);text-wrap:balance;}
+html.mobile .m-complete-card .m-complete-copy{font-size:17px;line-height:1.5;font-weight:400;color:var(--ink);text-wrap:balance;}
 html.mobile .m-complete-buttons{display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:24px;}
 html.mobile .m-complete-buttons .m-btn{width:100%;max-width:240px;}
 
@@ -1180,7 +1180,7 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
       <!-- MAP CANVAS FRAME (exact map shape) -->
       <div class="map-canvas-frame" id="map-canvas-frame">
         <!-- BASE MAP -->
-        <img src="Resources/PastedVector-16.svg" id="main-world-map" alt="World Map" class="world-map-svg">
+        <img src="Resources/PastedVector-16.svg" id="main-world-map" alt="" aria-hidden="true" class="world-map-svg">
 
         <!-- HIGHLIGHT MAP SVGS (map coordinates 1112.8 x 498.4) -->
         <svg class="map-highlights" viewBox="0 0 1112.8 498.4" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
@@ -1200,26 +1200,26 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
           <polyline id="leader-indiachina" class="map-leader" points="778,156 777.7,160.9 775,163.6" fill="none" stroke="#E3120B" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
 
-        <!-- MAP PINS -->
-        <button class="pin-btn pin-ukraine" data-id="ukraine" aria-label="The invasion of Crimea and eastern Ukraine">
+        <!-- MAP PINS (ordered West-to-East / Left-to-Right for logical keyboard Tab order) -->
+        <button class="pin-btn pin-ukraine" data-id="ukraine" aria-pressed="false" aria-label="The invasion of Crimea and eastern Ukraine">
           <img src="Resources/PastedVector-25.svg" alt="" class="pin-img">
         </button>
-        <button class="pin-btn pin-turkey" data-id="turkey" aria-label="Turkey’s intervention in Syria">
+        <button class="pin-btn pin-turkey" data-id="turkey" aria-pressed="false" aria-label="Turkey’s intervention in Syria">
           <img src="Resources/PastedVector-25.svg" alt="" class="pin-img">
         </button>
-        <button class="pin-btn pin-syria" data-id="syria" aria-label="Obama’s red line in Syria">
+        <button class="pin-btn pin-syria" data-id="syria" aria-pressed="false" aria-label="Obama’s red line in Syria">
           <img src="Resources/PastedVector-25.svg" alt="" class="pin-img">
         </button>
-        <button class="pin-btn pin-georgia" data-id="georgia" aria-label="The Russo-Georgian war">
+        <button class="pin-btn pin-georgia" data-id="georgia" aria-pressed="false" aria-label="The Russo-Georgian war">
           <img src="Resources/PastedVector-25.svg" alt="" class="pin-img">
         </button>
-        <button class="pin-btn pin-yemen" data-id="yemen" aria-label="War and famine in Yemen">
+        <button class="pin-btn pin-yemen" data-id="yemen" aria-pressed="false" aria-label="War and famine in Yemen">
           <img src="Resources/PastedVector-25.svg" alt="" class="pin-img">
         </button>
-        <button class="pin-btn pin-indiachina" data-id="indiachina" aria-label="India-China conflict">
+        <button class="pin-btn pin-indiachina" data-id="indiachina" aria-pressed="false" aria-label="India-China conflict">
           <img src="Resources/PastedVector-25.svg" alt="" class="pin-img">
         </button>
-        <button class="pin-btn pin-southchina" data-id="southchina" aria-label="Islands in the South China Sea">
+        <button class="pin-btn pin-southchina" data-id="southchina" aria-pressed="false" aria-label="Islands in the South China Sea">
           <img src="Resources/PastedVector-25.svg" alt="" class="pin-img">
         </button>
       </div>
@@ -1234,7 +1234,7 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
           class="modal-badge-graphic"
           onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 84 84'><circle cx='42' cy='42' r='40' fill='%23EBE9E0'/><path d='M42 26 L29 37 L33 37 L33 53 L51 53 L51 37 L55 37 Z' fill='%232E45B8'/></svg>';"
         >
-        <h2>The decline of US dominance has had significant repercussions around the world. Engage with this interactive infographic by clicking on the highlighted countries on the map to explore some of the consequences of the US’ retreat or non&#8209;intervention.</h2>
+        <p class="modal-copy">The decline of US dominance has had significant repercussions around the world. Engage with this interactive infographic by clicking on the highlighted countries on the map to explore some of the consequences of the US’ retreat or non&#8209;intervention.</p>
         <button class="action-btn" id="intro-continue-btn">Continue</button>
       </div>
     </div>
@@ -1264,53 +1264,47 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
             </svg>
           </div>
 
-          <!-- DIALOG CARD -->
+          <!-- DIALOG CARD (DOM order: Title -> Body -> Read more -> Close button) -->
           <div class="dialog-card">
             <div class="dialog-head">
-              <h2 id="card-title">The invasion of Crimea and eastern Ukraine</h2>
-              <button class="icon-btn close-card-btn" id="close-dialog-btn" aria-label="Close region details">
-                <svg viewBox="0 0 32.83 32.83" aria-hidden="true" focusable="false">
-                  <path class="ring" d="M16.41,32.33A15.92,15.92,0,1,0,.5,16.41,15.92,15.92,0,0,0,16.41,32.33"/>
-                  <path class="xglyph" d="M22.02,10.8L10.81,22.02M10.81,10.8L22.02,22.02"/>
-                </svg>
-              </button>
+              <h2 id="card-title" tabindex="-1">The invasion of Crimea and eastern Ukraine</h2>
             </div>
             <p id="card-body"></p>
             <button type="button" class="card-more" id="cardMore" aria-expanded="false" aria-controls="card-body" hidden><span id="cardMoreLabel">Read more</span><svg viewBox="0 0 12 8" aria-hidden="true" focusable="false"><path d="M1 1.5l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button class="icon-btn close-card-btn" id="close-dialog-btn" aria-label="Close region details">
+              <svg viewBox="0 0 32.83 32.83" aria-hidden="true" focusable="false">
+                <path class="ring" d="M16.41,32.33A15.92,15.92,0,1,0,.5,16.41,15.92,15.92,0,0,0,16.41,32.33"/>
+                <path class="xglyph" d="M22.02,10.8L10.81,22.02M10.81,10.8L22.02,22.02"/>
+              </svg>
+            </button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- COMPLETION OVERLAY MODAL -->
+    <!-- COMPLETION OVERLAY MODAL (DOM order: Message -> Actions -> Close button) -->
     <div class="dark-overlay" id="completion-modal" role="dialog" aria-modal="true" aria-label="Completed">
       <div class="center-modal completion-card">
+        <img src="Resources/PastedVector-6.svg" alt="" class="completion-illustration">
+        <p class="modal-copy">You have completed this interactive infographic.<br>What would you like to do next?</p>
+        <div class="completion-buttons">
+          <button class="action-btn" id="completion-exit-btn">Exit</button>
+          <button class="action-btn btn-outline" id="completion-biblio-btn">View bibliography</button>
+        </div>
         <button class="icon-btn close-card-btn" id="close-completion-btn" aria-label="Close completion message">
           <svg viewBox="0 0 32.83 32.83" aria-hidden="true" focusable="false">
             <path class="ring" d="M16.41,32.33A15.92,15.92,0,1,0,.5,16.41,15.92,15.92,0,0,0,16.41,32.33"/>
             <path class="xglyph" d="M22.02,10.8L10.81,22.02M10.81,10.8L22.02,22.02"/>
           </svg>
         </button>
-        <img src="Resources/PastedVector-6.svg" alt="" class="completion-illustration">
-        <h2>You have completed this interactive infographic.<br>What would you like to do next?</h2>
-        <div class="completion-buttons">
-          <button class="action-btn" id="completion-exit-btn">Exit</button>
-          <button class="action-btn btn-outline" id="completion-biblio-btn">View bibliography</button>
-        </div>
       </div>
     </div>
 
-    <!-- BIBLIOGRAPHY OVERLAY -->
+    <!-- BIBLIOGRAPHY OVERLAY (DOM order: Heading -> Entries -> Close button) -->
     <div class="biblio-overlay" id="biblio-overlay" role="dialog" aria-modal="true" aria-labelledby="bib-heading">
       <div class="biblio-card">
-        <button class="icon-btn close-card-btn" id="close-biblio-btn" aria-label="Close bibliography">
-          <svg viewBox="0 0 32.83 32.83" aria-hidden="true" focusable="false">
-            <path class="ring" d="M16.41,32.33A15.92,15.92,0,1,0,.5,16.41,15.92,15.92,0,0,0,16.41,32.33"/>
-            <path class="xglyph" d="M22.02,10.8L10.81,22.02M10.81,10.8L22.02,22.02"/>
-          </svg>
-        </button>
         <div class="bib-head">
-          <h2 id="bib-heading">Bibliography</h2>
+          <h2 id="bib-heading" tabindex="-1">Bibliography</h2>
         </div>
         <div class="bib-body" tabindex="0">
           <p class="bib-entry">Council on Foreign Relations. n.d. <i>Conflict in Ukraine.</i> Available: https://www.cfr.org/global-conflict-tracker/conflict/conflict-ukraine [2021, February 23].</p>
@@ -1324,6 +1318,12 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
           <p class="bib-entry">Turkey launches ground offensive in northern Syria. 2019. <i>BBC.</i> 9 October. Available: https://www.bbc.com/news/world-middle-east-49983357 [2021, February 23].</p>
           <p class="bib-entry">United Nations International Children’s Emergency Fund. n.d <i>Yemen Crisis.</i> Available: https://www.unicef.org/emergencies/yemen-crisis [2021, February 23].</p>
         </div>
+        <button class="icon-btn close-card-btn" id="close-biblio-btn" aria-label="Close bibliography">
+          <svg viewBox="0 0 32.83 32.83" aria-hidden="true" focusable="false">
+            <path class="ring" d="M16.41,32.33A15.92,15.92,0,1,0,.5,16.41,15.92,15.92,0,0,0,16.41,32.33"/>
+            <path class="xglyph" d="M22.02,10.8L10.81,22.02M10.81,10.8L22.02,22.02"/>
+          </svg>
+        </button>
       </div>
     </div>
 
@@ -1406,7 +1406,7 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
     <div class="m-complete-overlay" id="m-complete" role="dialog" aria-modal="true" aria-label="Interactive completed">
       <div class="m-complete-card" id="m-complete-card">
         <img src="Resources/PastedVector-6.svg" alt="">
-        <h3>You have completed this interactive infographic.<br>What would you like to do next?</h3>
+        <p class="m-complete-copy">You have completed this interactive infographic.<br>What would you like to do next?</p>
         <div class="m-complete-buttons">
           <button class="m-btn" id="m-complete-exit" type="button">Exit</button>
           <button class="m-btn m-btn-outline" id="m-complete-biblio" type="button">View bibliography</button>
@@ -1886,10 +1886,12 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
           contentModal.classList.add('active');
           syncInert();
           fitAndAlign(activePin);
+          document.querySelectorAll('.pin-btn').forEach(p => p.setAttribute('aria-pressed', 'false'));
+          btn.setAttribute('aria-pressed', 'true');
           btn.classList.add('viewed');
-          btn.setAttribute('aria-label', btn.dataset.baseLabel + ', visited');
+          btn.setAttribute('aria-label', btn.dataset.baseLabel + ' (visited)');
           viewedMap.add(id);
-          document.getElementById('close-dialog-btn').focus({ preventScroll: true });
+          cardTitle.focus({ preventScroll: true });
           announce(data.title + '. ' + data.body);
         }
       });
@@ -1900,6 +1902,7 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
       if (!contentModal.classList.contains('active')) return;
       const closedPin = activePin;
       if (closedPin) {
+        closedPin.setAttribute('aria-pressed', 'false');
         const pinImg = closedPin.querySelector('.pin-img');
         const alreadyBlue = pinImg && pinImg.getAttribute('src') === 'Resources/PastedVector-43.svg';
         if (!alreadyBlue) {
@@ -1951,7 +1954,7 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
       modalOpener = document.activeElement;
       biblioOverlay.classList.add('active');
       syncInert();
-      document.getElementById('close-biblio-btn').focus({ preventScroll: true });
+      document.getElementById('bib-heading').focus({ preventScroll: true });
     });
     document.getElementById('close-biblio-btn').addEventListener('click', () => {
       biblioOverlay.classList.remove('active');
@@ -1969,7 +1972,7 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
       modalOpener = document.getElementById('btn-biblio');
       biblioOverlay.classList.add('active');
       syncInert();
-      document.getElementById('close-biblio-btn').focus({ preventScroll: true });
+      document.getElementById('bib-heading').focus({ preventScroll: true });
     });
 
     function resetToCover() {
@@ -1981,6 +1984,7 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
       if (spotlightIcLeader) spotlightIcLeader.style.display = 'none';
       document.querySelectorAll('.pin-btn').forEach(p => {
         p.classList.remove('viewed', 'animated', 'swiveling');
+        p.setAttribute('aria-pressed', 'false');
         if (p.dataset.baseLabel) p.setAttribute('aria-label', p.dataset.baseLabel);
         const pinImg = p.querySelector('.pin-img');
         if (pinImg) pinImg.src = 'Resources/PastedVector-25.svg';
@@ -2505,3 +2509,4 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
   </script>
 </body>
 </html>
+
