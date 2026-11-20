@@ -1155,6 +1155,9 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
   .cover-title,.btn-start,.m-cover-title,.m-cover .m-btn{opacity:1 !important;transform:none !important}
   #intro-modal .center-modal,#completion-modal .center-modal,html.mobile .m-intro-card{opacity:1 !important;transform:none !important}
 }
+
+/* Start must already be at rest when it takes keyboard focus (the focus ring was drawn mid-animation) */
+html.cv-skip .cover-title,html.cv-skip .btn-start,html.cv-skip .m-cover-title,html.cv-skip .m-btn{animation:none !important;opacity:1 !important;transform:none !important}
 </style>
 </head>
 <body>
@@ -1212,8 +1215,9 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
 
     <div class="stage-view">
       <h1 class="sr-only">When the cat’s away</h1>
+      <p id="map-help" class="sr-only" tabindex="-1">Interactive map. Select a toggle button to get started. There is one toggle button for each region; selecting it opens that region’s story.</p>
       <!-- MAP CANVAS FRAME (exact map shape) -->
-      <div class="map-canvas-frame" id="map-canvas-frame">
+      <div class="map-canvas-frame" id="map-canvas-frame" role="group" aria-label="Regions">
         <!-- BASE MAP -->
         <img src="Resources/PastedVector-16.svg" id="main-world-map" alt="" aria-hidden="true" class="world-map-svg">
 
@@ -1592,12 +1596,13 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
       }
       [headerEl, stageEl].forEach(el => {
         if (!el) return;
-        if (coverOpen || anyModalOpen) el.setAttribute('inert', '');
-        else el.removeAttribute('inert');
+        if (coverOpen || anyModalOpen) { el.setAttribute('inert', ''); el.setAttribute('aria-hidden', 'true'); }
+        else { el.removeAttribute('inert'); el.removeAttribute('aria-hidden'); }
       });
     }
 
     function triggerCoverAnimation() {
+      if (!window.ceKbd) document.documentElement.classList.remove('cv-skip');
       coverView.classList.remove('go');
       void coverView.offsetWidth;
       coverView.classList.add('go');
@@ -1897,13 +1902,24 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
     document.getElementById('intro-continue-btn').addEventListener('click', () => {
       introModal.classList.remove('active');
       syncInert();
-      const stage = document.querySelector('.stage-view');
-      if (stage) {
-        stage.setAttribute('tabindex', '-1');
-        stage.focus({ preventScroll: true });
-      }
-      announce('Interactive map ready. Select any highlighted country pin to explore.');
+      const help = document.getElementById('map-help');
+      if (help) window.ceFocusFinal(help);   /* read once, because the learner pressed Continue; the pins are only read when they are focused or selected */
     });
+
+    /* inert/aria-hidden always follow the cover and dialogs, whichever code path opens or closes them */
+    new MutationObserver(syncInert).observe(coverView, { attributes: true, attributeFilter: ['class'] });
+    [introModal, contentModal, completionModal, biblioOverlay].forEach(el => new MutationObserver(syncInert).observe(el, { attributes: true, attributeFilter: ['class'] }));
+    syncInert();
+    /* keyboard use finishes the cover entrance at once, so Start takes focus already at rest. Click, not pointerdown, so the button does not move away before the click lands. */
+    (function () {
+      var root = document.documentElement;
+      window.ceKbd = false;
+      function skip() { root.classList.add('cv-skip'); }
+      document.addEventListener('keydown', function () { window.ceKbd = true; skip(); }, true);
+      document.addEventListener('pointerdown', function () { window.ceKbd = false; }, true);
+      document.addEventListener('click', skip, true);
+      ['btn-start-cover', 'm-start'].forEach(function (id) { var b = document.getElementById(id); if (b) b.addEventListener('focus', skip); });
+    })();
 
     // 3. MAP PINS HOVER & CLICK HANDLERS
     const icLeader = document.getElementById('leader-indiachina');
@@ -2074,6 +2090,7 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
       const mapFrame = document.getElementById('map-canvas-frame');
       if (mapFrame) mapFrame.classList.remove('map-enter');
       coverView.classList.remove('hidden');
+      syncInert();   /* the cover is back: header and pins must leave the tab order and the screen reader tree */
       triggerCoverAnimation();
       const covT = document.getElementById('cov-title');
       if (covT) {
@@ -2466,7 +2483,7 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
         nextBtn.setAttribute('aria-label', atEnd && allSeen ? 'Next: finish the interactive' : 'Next');
         if (userAction) {
           var d = regionData[ids[n]];
-          if (d) announce('Slide ' + (n + 1) + ' of ' + ids.length + ': ' + d.title + '. ' + d.body);
+          if (d) announce('Slide ' + (n + 1) + ' of ' + ids.length + ': ' + d.title);
           scrollToTop();
         }
       }
@@ -2514,7 +2531,7 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
         var d = regionData[ids[current]];
         var h = slideEls[current].querySelector('h2');
         if (h) h.focus({ preventScroll: true });
-        if (d) announce('Slide ' + (current + 1) + ' of ' + ids.length + ': ' + d.title + '. ' + d.body);
+        if (d) announce('Slide ' + (current + 1) + ' of ' + ids.length + ': ' + d.title);
       });
       prevBtn.addEventListener('click', function () { go(current - 1, true); });
       nextBtn.addEventListener('click', function () {
