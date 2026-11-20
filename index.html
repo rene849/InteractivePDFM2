@@ -414,6 +414,17 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;touch-acti
   opacity:1;
   pointer-events:auto;
 }
+/* Blue layer fades in first, then the white card fades and rises in (same pattern as the mobile completion card) */
+#intro-modal .center-modal,#completion-modal .center-modal{
+  opacity:0;
+  transform:translateY(18px);
+  transition:opacity .35s cubic-bezier(.25,1,.5,1),transform .45s cubic-bezier(.25,1,.5,1);
+}
+#intro-modal.active .center-modal,#completion-modal.active .center-modal{
+  opacity:1;
+  transform:none;
+  transition-delay:.2s;
+}
 
 .spotlight-view-container{
   position:relative;
@@ -921,7 +932,7 @@ html.mobile .m-cover-title{
   order:1;
   font-size:clamp(32px,10.25vw,42px);
   font-weight:700;
-  line-height:1.22;
+  line-height:1.35;
   color:var(--ink);
   margin:0 0 clamp(20px,8.6vw,32px);
   opacity:0;
@@ -1111,6 +1122,8 @@ html.mobile .m-intro{
   transition:opacity .3s ease,visibility .3s ease;
 }
 html.mobile .m-intro.active{opacity:1;visibility:visible;}
+html.mobile .m-intro-card{opacity:0;transform:translateY(18px);transition:opacity .35s ease,transform .45s cubic-bezier(.25,1,.5,1);}
+html.mobile .m-intro.active .m-intro-card{opacity:1;transform:none;transition-delay:.2s;}
 html.mobile .m-intro-card{position:relative;background:#fff;width:100%;max-width:340px;padding:64px 18px 28px;text-align:center;box-shadow:0 16px 48px rgba(0,0,0,.3);}
 html.mobile .m-intro-badge{position:absolute;top:-50px;left:50%;transform:translateX(-50%);width:100px;height:100px;border-radius:50%;background:#fff;}
 html.mobile .m-intro-card p{font-size:15px;line-height:1.65;color:var(--ink);text-align:center;max-width:29ch;margin-left:auto;margin-right:auto;text-wrap:balance;}
@@ -1134,18 +1147,27 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
   .m-intro,.m-complete-overlay,.m-complete-card,.dark-overlay,.biblio-overlay{transition:none !important;}
 }
 </style>
+<style>
+/* Reduced motion: safety net on top of the build's own rules. No animation or smooth movement; cover content shown immediately. */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto !important}
+  *,*::before,*::after{animation-duration:.01ms !important;animation-delay:0s !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;transition-delay:0s !important;scroll-behavior:auto !important}
+  .cover-title,.btn-start,.m-cover-title,.m-cover .m-btn{opacity:1 !important;transform:none !important}
+  #intro-modal .center-modal,#completion-modal .center-modal,html.mobile .m-intro-card{opacity:1 !important;transform:none !important}
+}
+</style>
 </head>
 <body>
 
   <div id="srStatus" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
 
-  <div class="interactive-container" id="interactive-app">
+  <main class="interactive-container" id="interactive-app">
 
     <!-- COVER SLIDE -->
     <section class="view-cover" id="cover-view">
       <div class="cover-content">
         <h1 class="cover-title" id="cov-title">When the cat’s away</h1>
-        <button class="btn-start" id="btn-start-cover" aria-label="Start Interactive">Start</button>
+        <button class="btn-start" id="btn-start-cover">Start</button>
       </div>
       <div class="cover-illustration" aria-hidden="true">
         <img 
@@ -1188,7 +1210,7 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
       </div>
     </header>
 
-    <main class="stage-view">
+    <div class="stage-view">
       <h1 class="sr-only">When the cat’s away</h1>
       <!-- MAP CANVAS FRAME (exact map shape) -->
       <div class="map-canvas-frame" id="map-canvas-frame">
@@ -1236,7 +1258,7 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
           <img src="Resources/PastedVector-25.svg" alt="" class="pin-img">
         </button>
       </div>
-    </main>
+    </div>
 
     <!-- INTRO OVERLAY MODAL -->
     <div class="dark-overlay" id="intro-modal" role="dialog" aria-modal="true" aria-label="Introduction">
@@ -1340,19 +1362,19 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
       </div>
     </div>
 
-  </div>
+  </main>
 
   <!-- ========================================================= -->
   <!-- MOBILE VIEW (displayed when iframe width <= 690px)        -->
   <!-- ========================================================= -->
-  <div class="mobile-app" id="mobile-app" data-view="cover">
+  <main class="mobile-app" id="mobile-app" data-view="cover">
 
     <!-- Mobile cover -->
     <section class="m-cover" id="m-cover">
       <h1 class="m-cover-title">When the cat’s away</h1>
       <img class="m-cover-img" src="Resources/PastedVector-38.svg" alt=""
         onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 360 300&quot;><ellipse cx=&quot;240&quot; cy=&quot;240&quot; rx=&quot;95&quot; ry=&quot;28&quot; fill=&quot;%23EBE9E0&quot;/><path d=&quot;M240 230c45 0 85-30 65-75s-20-40-5-5-10 65-60 80z&quot; fill=&quot;%23141F52&quot;/><circle cx=&quot;215&quot; cy=&quot;130&quot; r=&quot;24&quot; fill=&quot;%23141F52&quot;/><circle cx=&quot;280&quot; cy=&quot;130&quot; r=&quot;24&quot; fill=&quot;%23141F52&quot;/><circle cx=&quot;248&quot; cy=&quot;155&quot; r=&quot;42&quot; fill=&quot;%232E45B8&quot;/><polygon points=&quot;205,200 235,215 205,230&quot; fill=&quot;%23F5C344&quot;/></svg>';">
-      <button class="m-btn" id="m-start" type="button" aria-label="Start Interactive">Start</button>
+      <button class="m-btn" id="m-start" type="button">Start</button>
     </section>
 
     <!-- Mobile header -->
@@ -1382,7 +1404,7 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
     </header>
 
     <!-- Mobile slides (carousel) -->
-    <main class="m-slides-view" id="m-slides-view">
+    <div class="m-slides-view" id="m-slides-view">
       <div class="m-carousel" id="m-carousel" role="region" aria-roledescription="carousel" aria-label="Consequences of the US retreat">
         <div id="m-slides"></div>
       </div>
@@ -1395,7 +1417,7 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.9" stroke-linecap="butt" stroke-linejoin="miter" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
         </button>
       </div>
-    </main>
+    </div>
 
     <!-- Mobile bibliography page -->
     <section class="m-biblio-view" id="m-biblio-view">
@@ -1416,7 +1438,7 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
     </div>
 
     <!-- Mobile completion overlay -->
-    <div class="m-complete-overlay" id="m-complete" role="dialog" aria-modal="true" aria-label="Interactive completed">
+    <div class="m-complete-overlay" id="m-complete" role="dialog" aria-modal="true" aria-label="Completed">
       <div class="m-complete-card" id="m-complete-card">
         <img src="Resources/PastedVector-6.svg" alt="">
         <p class="m-complete-copy">You have completed this interactive infographic.<br>What would you like to do next?</p>
@@ -1427,7 +1449,7 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
       </div>
     </div>
 
-  </div>
+  </main>
 
   <script>
     'use strict';
@@ -1516,6 +1538,27 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
 
     const viewedMap = new Set();
     let desktopCompletionShown = false;
+    /* focusFinal (same as M4): focus only once the target has stopped moving (3 still frames, 800ms max) */
+    (function () {
+      var focusToken = 0;
+      window.ceFocusFinal = function (el) {
+        if (!el) return;
+        var tok = ++focusToken, last = '', still = 0, t0 = performance.now();
+        (function tick() {
+          if (tok !== focusToken) return;
+          if (!el.isConnected) return;
+          var r = el.getBoundingClientRect(), key = Math.round(r.top) + '/' + Math.round(r.left) + '/' + Math.round(r.width) + '/' + Math.round(r.height);
+          still = key === last ? still + 1 : 0; last = key;
+          if (still >= 3 || performance.now() - t0 > 800) el.focus({ preventScroll: true });
+          else requestAnimationFrame(tick);
+        })();
+      };
+      /* pop-up initial focus goes to the first text, not the button (M4 decision) */
+      window.ceFocusText = function (layer) {
+        var t = layer && layer.querySelector('.modal-copy, .m-intro-card p, .m-complete-copy');
+        if (t) { t.setAttribute('tabindex', '-1'); window.ceFocusFinal(t); }
+      };
+    })();
     let completionTimer = null;
     const pinFlipTimers = new Set();
     const prefersReduced = () => !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -1846,7 +1889,7 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
       setTimeout(() => {
         introModal.classList.add('active');
         syncInert();
-        document.getElementById('intro-continue-btn').focus({ preventScroll: true });
+        window.ceFocusText(introModal);
       }, 280 + pins.length * 110 + 250);
     });
 
@@ -1922,8 +1965,7 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
           btn.classList.add('viewed');
           btn.setAttribute('aria-label', btn.dataset.baseLabel + ' (visited)');
           viewedMap.add(id);
-          cardTitle.focus({ preventScroll: true });
-          announce(data.title + '. ' + data.body);
+          window.ceFocusFinal(cardTitle);
         }
       });
     });
@@ -1967,13 +2009,10 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
           if (contentModal.classList.contains('active') || introModal.classList.contains('active')) return;
           completionModal.classList.add('active');
           syncInert();
-          document.getElementById('completion-exit-btn').focus({ preventScroll: true });
-          announce('You have completed this interactive infographic.');
+          window.ceFocusText(completionModal);
         }, flipMs + 450);
       } else {
-        const nextUnviewed = document.querySelector('.pin-btn:not(.viewed)');
-        if (nextUnviewed) nextUnviewed.focus({ preventScroll: true });
-        else if (closedPin) closedPin.focus({ preventScroll: true });
+        if (closedPin) closedPin.focus({ preventScroll: true });
       }
     }
 
@@ -2056,7 +2095,7 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
       document.querySelectorAll('.pin-btn').forEach(p => p.classList.add('animated'));
       introModal.classList.add('active');
       syncInert();
-      document.getElementById('intro-continue-btn').focus({ preventScroll: true });
+      window.ceFocusText(introModal);
       signalTop();
     }
 
@@ -2087,7 +2126,7 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
       if (e.key === 'Tab') {
         const focusables = Array.from(openModal.querySelectorAll('button,[tabindex]:not([tabindex="-1"])')).filter(el => el.offsetParent !== null);
         if (!focusables.length) return;
-        if (e.shiftKey && document.activeElement === focusables[0]) {
+        if (e.shiftKey && (document.activeElement === focusables[0] || focusables.indexOf(document.activeElement) === -1)) {
           e.preventDefault();
           focusables[focusables.length - 1].focus();
         } else if (!e.shiftKey && document.activeElement === focusables[focusables.length - 1]) {
@@ -2420,10 +2459,11 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
         dotEls.forEach(function (d, i) {
           if (i === n) d.setAttribute('aria-current', 'true'); else d.removeAttribute('aria-current');
         });
-        prevBtn.disabled = n === 0;
-        nextBtn.disabled = n === ids.length - 1;
         viewed.add(ids[n]);
-        if (viewed.size === ids.length && !completeShown) scheduleComplete();
+        var atEnd = n === ids.length - 1, allSeen = viewed.size === ids.length;
+        prevBtn.disabled = n === 0;
+        nextBtn.disabled = atEnd && !allSeen;
+        nextBtn.setAttribute('aria-label', atEnd && allSeen ? 'Next: finish the interactive' : 'Next');
         if (userAction) {
           var d = regionData[ids[n]];
           if (d) announce('Slide ' + (n + 1) + ' of ' + ids.length + ': ' + d.title + '. ' + d.body);
@@ -2432,18 +2472,16 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
       }
 
       function scheduleComplete() {
+        /* shown only when the person presses the arrow on the last slide (no automatic pop-up) */
         completeShown = true;
         clearTimeout(completeTimer);
+        if (app.getAttribute('data-view') !== 'slides') return;
+        complete.classList.add('active');
+        syncMobileInert();
         completeTimer = setTimeout(function () {
-          if (app.getAttribute('data-view') !== 'slides') return;
-          complete.classList.add('active');
-          syncMobileInert();
-          announce('You have completed this interactive infographic.');
-          setTimeout(function () {
-            try { document.getElementById('m-complete-card').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' }); } catch (e) {}
-            document.getElementById('m-complete-exit').focus({ preventScroll: true });
-          }, 350);
-        }, 800);
+          try { document.getElementById('m-complete-card').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' }); } catch (e) {}
+          window.ceFocusText(complete);
+        }, 350);
       }
       function hideComplete() {
         clearTimeout(completeTimer);
@@ -2467,7 +2505,7 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
         go(0, false);
         intro.classList.add('active');
         syncMobileInert();
-        document.getElementById('m-intro-continue').focus({ preventScroll: true });
+        window.ceFocusText(intro);
         signalTop();
       });
       document.getElementById('m-intro-continue').addEventListener('click', function () {
@@ -2479,14 +2517,17 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
         if (d) announce('Slide ' + (current + 1) + ' of ' + ids.length + ': ' + d.title + '. ' + d.body);
       });
       prevBtn.addEventListener('click', function () { go(current - 1, true); });
-      nextBtn.addEventListener('click', function () { go(current + 1, true); });
+      nextBtn.addEventListener('click', function () {
+        if (current === ids.length - 1) { if (viewed.size === ids.length) scheduleComplete(); return; }
+        go(current + 1, true);
+      });
 
       document.getElementById('m-btn-home').addEventListener('click', function () {
         hideComplete();
         setView('slides');
         intro.classList.add('active');
         syncMobileInert();
-        document.getElementById('m-intro-continue').focus({ preventScroll: true });
+        window.ceFocusText(intro);
         signalTop();
       });
       document.getElementById('m-btn-exit').addEventListener('click', resetAll);
@@ -2498,19 +2539,19 @@ html.mobile .m-intro-card .m-btn{margin-top:24px;width:auto;min-width:152px;padd
         if (app.getAttribute('data-view') === 'biblio') closeBiblio(); else openBiblio();
       });
       document.getElementById('m-complete-biblio').addEventListener('click', function () { hideComplete(); openBiblio(); });
-      complete.addEventListener('click', function (e) { if (e.target === complete) hideComplete(); });
+      complete.addEventListener('click', function (e) { if (e.target === complete) { hideComplete(); nextBtn.focus({ preventScroll: true }); } });
       document.addEventListener('keydown', function (e) {
         var openM = [complete, intro].find(function (m) { return m.classList.contains('active'); });
         if (!openM) return;
         if (e.key === 'Escape') {
-          if (openM === complete) hideComplete();
+          if (openM === complete) { hideComplete(); nextBtn.focus({ preventScroll: true }); }
           else if (openM === intro) document.getElementById('m-intro-continue').click();
           return;
         }
         if (e.key === 'Tab') {
           var focusables = Array.from(openM.querySelectorAll('button,[tabindex]:not([tabindex="-1"])')).filter(function (el) { return el.offsetParent !== null; });
           if (!focusables.length) return;
-          if (e.shiftKey && document.activeElement === focusables[0]) {
+          if (e.shiftKey && (document.activeElement === focusables[0] || focusables.indexOf(document.activeElement) === -1)) {
             e.preventDefault();
             focusables[focusables.length - 1].focus();
           } else if (!e.shiftKey && document.activeElement === focusables[focusables.length - 1]) {
