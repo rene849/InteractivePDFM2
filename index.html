@@ -2209,7 +2209,7 @@ html.cv-skip .cover-title,html.cv-skip .btn-start,html.cv-skip .m-cover-title,ht
       // Fluid height capped to usableH() & 660px max (matching M5), 578px baseline (matching M1)
       // One frame height for all modules: 644px (660px iframe minus the 8px body margins) (1100px+), 614px (1000px+), otherwise 578px; never taller than the visible area
       var cap = Math.max(480, usableH() - 48);
-      var h = Math.min(w >= 1100 ? 644 : (w >= 1000 ? 614 : 578), cap);
+      var h = Math.min(w >= 1100 ? 610 : 578, cap);
 
       root.style.setProperty('--screen-min', h + 'px');
       root.style.setProperty('--frame-h', h + 'px');
