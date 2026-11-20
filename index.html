@@ -98,7 +98,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;touch-acti
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:clamp(24px,4vw,64px) clamp(28px,6vw,96px);
+  padding:clamp(24px,4vw,64px) var(--pad);   /* title and Start start at --pad, like M1, M4 and M5 */
   z-index:500;
   transition:opacity .35s ease,visibility .35s ease;
 }
@@ -122,7 +122,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;touch-acti
   line-height:1.35;
   letter-spacing:0;
   white-space:nowrap;
-  margin:0 0 1em;
+  margin:0 0 24px;
   opacity:0;
   transform:translateY(80px);
 }
@@ -133,7 +133,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;touch-acti
 }
 .btn-start{
   align-self:flex-start;
-  min-width:152px;
+  min-width:156px;
   height:48px;
   padding:0 28px;
   display:inline-flex;
@@ -1569,6 +1569,7 @@ html.cv-skip .cover-title,html.cv-skip .btn-start,html.cv-skip .m-cover-title,ht
     function flipTimer(fn, ms) { const t = setTimeout(() => { pinFlipTimers.delete(t); fn(); }, ms); pinFlipTimers.add(t); return t; }
     function resetPinsAndProgress() {
       clearTimeout(completionTimer);
+      completionPending = false;
       pinFlipTimers.forEach(clearTimeout); pinFlipTimers.clear();
       viewedMap.clear();
       desktopCompletionShown = false;
@@ -1583,16 +1584,17 @@ html.cv-skip .cover-title,html.cv-skip .btn-start,html.cv-skip .m-cover-title,ht
     }
     let activePin = null;
     let modalOpener = null;
+    let completionPending = false;   /* the exit layer is on its way: the map is already out of reach (no reading it in the gap) */
 
     function syncInert() {
       const coverOpen = !coverView.classList.contains('hidden');
-      const anyModalOpen = [introModal, contentModal, completionModal, biblioOverlay].some(el => el.classList.contains('active'));
+      const anyModalOpen = completionPending || [introModal, contentModal, completionModal, biblioOverlay].some(el => el.classList.contains('active'));
       const headerEl = document.querySelector('.app-header');
       const stageEl = document.querySelector('.stage-view');
 
       if (coverView) {
-        if (anyModalOpen) coverView.setAttribute('inert', '');
-        else coverView.removeAttribute('inert');
+        if (anyModalOpen) { coverView.setAttribute('inert', ''); coverView.setAttribute('aria-hidden', 'true'); }
+        else { coverView.removeAttribute('inert'); coverView.removeAttribute('aria-hidden'); }
       }
       [headerEl, stageEl].forEach(el => {
         if (!el) return;
@@ -2019,10 +2021,13 @@ html.cv-skip .cover-title,html.cv-skip .btn-start,html.cv-skip .m-cover-title,ht
 
       if (viewedMap.size === 7 && !desktopCompletionShown) {
         desktopCompletionShown = true;
-        // Exit layer only after the last feedback card has fully closed and the last pin has finished turning blue
-        if (closedPin) closedPin.focus({ preventScroll: true });
+        // Exit layer only after the last feedback card has fully closed and the last pin has finished turning blue.
+        // Until it opens the map is already inert/hidden and focus is not handed back to the pin, so nothing under the layer is read.
+        completionPending = true;
+        syncInert();
         completionTimer = setTimeout(() => {
-          if (contentModal.classList.contains('active') || introModal.classList.contains('active')) return;
+          completionPending = false;
+          if (contentModal.classList.contains('active') || introModal.classList.contains('active')) { syncInert(); return; }
           completionModal.classList.add('active');
           syncInert();
           window.ceFocusText(completionModal);
@@ -2202,12 +2207,9 @@ html.cv-skip .cover-title,html.cv-skip .btn-start,html.cv-skip .m-cover-title,ht
       if (deskApp) deskApp.removeAttribute('inert');
 
       // Fluid height capped to usableH() & 660px max (matching M5), 578px baseline (matching M1)
-      var cap = Math.max(520, usableH() - 48);
-      var targetH = Math.min(660, cap);
-      var cardW = Math.min(1120, Math.max(320, w - 16));
-      // Natural 16:9 height at current card width, clamped between 578px and targetH
-      var naturalH = Math.round(cardW * 9 / 16);
-      var h = Math.max(Math.min(578, cap), Math.min(targetH, naturalH));
+      // One frame height for all modules: 644px (660px iframe minus the 8px body margins) (1100px+), 614px (1000px+), otherwise 578px; never taller than the visible area
+      var cap = Math.max(480, usableH() - 48);
+      var h = Math.min(w >= 1100 ? 644 : (w >= 1000 ? 614 : 578), cap);
 
       root.style.setProperty('--screen-min', h + 'px');
       root.style.setProperty('--frame-h', h + 'px');
@@ -2431,22 +2433,11 @@ html.cv-skip .cover-title,html.cv-skip .btn-start,html.cv-skip .m-cover-title,ht
         var mSld = document.getElementById('m-slides-view');
         var mBib = document.getElementById('m-biblio-view');
 
-        if (mCov) {
-          if (modalOpen || v !== 'cover') mCov.setAttribute('inert', '');
-          else mCov.removeAttribute('inert');
-        }
-        if (mHdr) {
-          if (modalOpen || v === 'cover') mHdr.setAttribute('inert', '');
-          else mHdr.removeAttribute('inert');
-        }
-        if (mSld) {
-          if (modalOpen || v !== 'slides') mSld.setAttribute('inert', '');
-          else mSld.removeAttribute('inert');
-        }
-        if (mBib) {
-          if (modalOpen || v !== 'biblio') mBib.setAttribute('inert', '');
-          else mBib.removeAttribute('inert');
-        }
+        function lock(el, off) { if (!el) return; if (off) { el.setAttribute('inert', ''); el.setAttribute('aria-hidden', 'true'); } else { el.removeAttribute('inert'); el.removeAttribute('aria-hidden'); } }
+        lock(mCov, modalOpen || v !== 'cover');
+        lock(mHdr, modalOpen || v === 'cover');
+        lock(mSld, modalOpen || v !== 'slides');
+        lock(mBib, modalOpen || v !== 'biblio');
       }
 
       function setView(v) {
