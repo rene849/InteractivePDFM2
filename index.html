@@ -619,7 +619,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;touch-acti
   left:4.5%;
   bottom:16% !important;
   top:auto !important;
-  width:44%;
+  width:41.5%;
   max-width:none;
   padding:clamp(18px, calc(24 * var(--u)), 26px) clamp(20px, calc(36 * var(--u)), 40px) clamp(20px, calc(28 * var(--u)), 32px);
 }
@@ -629,15 +629,17 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;touch-acti
   font-weight:700;
   color:var(--ink);
 }
+/* keep a clear gap between the card and the spotlight circle (side menus open = narrower frame) */
+.spotlight-view-container.layout-left.syria-layout .dialog-card{left:5%;}
 @container (max-width: 919px){
   .spotlight-view-container.layout-left.turkey-layout .dialog-card{
     left:3%;
-    width:47.5%;
+    width:43.5%;
     padding-left:18px;
     padding-right:18px;
   }
   .spotlight-view-container.layout-left.syria-layout .dialog-card{
-    left:3.5%;
+    left:2%;
     width:47%;
     padding-left:18px;
     padding-right:18px;
@@ -656,7 +658,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;touch-acti
 }
 .spotlight-view-container.layout-left.card-wide .dialog-card{left:8.5%;width:45%;bottom:16%;}
 .spotlight-view-container.layout-left.card-wider .dialog-card{left:5.5%;width:50.5%;bottom:16%;}
-.spotlight-view-container.layout-left.yemen-layout .dialog-card{left:1.7%;width:50%;bottom:12%;}
+.spotlight-view-container.layout-left.yemen-layout .dialog-card{left:1.7%;width:47.5%;bottom:12%;}
 .spotlight-view-container.layout-left.wedge-outer .dialog-card{bottom:12%;}
 
 .spotlight-view-container.layout-left .spotlight-beam{
