@@ -1217,7 +1217,7 @@ html.cv-skip .cover-title,html.cv-skip .btn-start,html.cv-skip .m-cover-title,ht
 
     <div class="stage-view">
       <h1 class="sr-only">When the cat’s away</h1>
-      <p id="map-help" class="sr-only" tabindex="-1">Interactive map. Select a toggle button to get started. There is one toggle button for each region; selecting it opens that region’s story.</p>
+      <p id="map-help" class="sr-only" tabindex="-1">Interactive map. Select a toggle button to get started. There is one toggle button for each region; selecting it opens that region’s information.</p>
       <!-- MAP CANVAS FRAME (exact map shape) -->
       <div class="map-canvas-frame" id="map-canvas-frame" role="group" aria-label="Regions">
         <!-- BASE MAP -->
@@ -1520,6 +1520,7 @@ html.cv-skip .cover-title,html.cv-skip .btn-start,html.cv-skip .m-cover-title,ht
     }
 
     function signalTop() {
+      if ((document.documentElement.clientWidth || window.innerWidth) > 690) return;   // phones only
       try { window.parent.postMessage({ type: 'ce-top', app: 'ce-interactive' }, '*'); } catch (e) {}
     }
 
@@ -2057,7 +2058,7 @@ html.cv-skip .cover-title,html.cv-skip .btn-start,html.cv-skip .m-cover-title,ht
     document.getElementById('close-biblio-btn').addEventListener('click', () => {
       biblioOverlay.classList.remove('active');
       syncInert();
-      if (modalOpener && modalOpener.focus && document.contains(modalOpener)) modalOpener.focus();
+      if (modalOpener && modalOpener.focus && document.contains(modalOpener)) modalOpener.focus({ preventScroll: true });
     });
     
     document.getElementById('close-completion-btn').addEventListener('click', () => {
@@ -2152,10 +2153,10 @@ html.cv-skip .cover-title,html.cv-skip .btn-start,html.cv-skip .m-cover-title,ht
         if (!focusables.length) return;
         if (e.shiftKey && (document.activeElement === focusables[0] || focusables.indexOf(document.activeElement) === -1)) {
           e.preventDefault();
-          focusables[focusables.length - 1].focus();
+          focusables[focusables.length - 1].focus({ preventScroll: true });
         } else if (!e.shiftKey && document.activeElement === focusables[focusables.length - 1]) {
           e.preventDefault();
-          focusables[0].focus();
+          focusables[0].focus({ preventScroll: true });
         }
       }
     });
@@ -2451,6 +2452,7 @@ html.cv-skip .cover-title,html.cv-skip .btn-start,html.cv-skip .m-cover-title,ht
 
       function scrollToTop() {
         signalTop();
+        if ((document.documentElement.clientWidth || window.innerWidth) > 690) return;   // no automatic scrolling on desktop
         try { app.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' }); } catch (e) {}
       }
 
@@ -2489,7 +2491,7 @@ html.cv-skip .cover-title,html.cv-skip .btn-start,html.cv-skip .m-cover-title,ht
         complete.classList.add('active');
         syncMobileInert();
         completeTimer = setTimeout(function () {
-          try { document.getElementById('m-complete-card').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' }); } catch (e) {}
+          if ((document.documentElement.clientWidth || window.innerWidth) <= 690) try { document.getElementById('m-complete-card').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' }); } catch (e) {}
           window.ceFocusText(complete);
         }, 350);
       }
@@ -2563,10 +2565,10 @@ html.cv-skip .cover-title,html.cv-skip .btn-start,html.cv-skip .m-cover-title,ht
           if (!focusables.length) return;
           if (e.shiftKey && (document.activeElement === focusables[0] || focusables.indexOf(document.activeElement) === -1)) {
             e.preventDefault();
-            focusables[focusables.length - 1].focus();
+            focusables[focusables.length - 1].focus({ preventScroll: true });
           } else if (!e.shiftKey && document.activeElement === focusables[focusables.length - 1]) {
             e.preventDefault();
-            focusables[0].focus();
+            focusables[0].focus({ preventScroll: true });
           }
         }
       });
