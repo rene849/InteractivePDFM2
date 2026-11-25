@@ -2022,6 +2022,42 @@ html.cv-skip .cover-title,html.cv-skip .btn-start,html.cv-skip .m-cover-title,ht
 
     document.getElementById('close-dialog-btn').addEventListener('click', closeSpotlightDialog);
 
+    /* tier hand-over: the phone and desktop layouts are separate trees, so the position is copied across when the width crosses the phone breakpoint */
+    window.ceDeskGet = function () {
+      var ph = 'map';
+      if (!coverView.classList.contains('hidden')) ph = 'cover';
+      else if (completionModal.classList.contains('active') || completionPending) ph = 'done';
+      else if (contentModal.classList.contains('active')) ph = 'card';
+      else if (introModal.classList.contains('active')) ph = 'intro';
+      else if (biblioOverlay.classList.contains('active')) ph = 'biblio';
+      return { phase: ph, id: currentRegionId, viewed: Array.from(viewedMap) };
+    };
+    window.ceDeskSet = function (s) {
+      if (s.phase === 'cover') { if (coverView.classList.contains('hidden')) resetToCover(); return; }
+      clearTimeout(completionTimer); completionPending = false;
+      pinFlipTimers.forEach(clearTimeout); pinFlipTimers.clear();
+      [contentModal, introModal, completionModal, biblioOverlay].forEach(function (m) { m.classList.remove('active'); });
+      cardExpanded = false;
+      var app = document.getElementById('interactive-app'); if (app) app.style.height = '';
+      viewedMap.clear();
+      document.querySelectorAll('.pin-btn').forEach(function (p) {
+        var seen = s.viewed.indexOf(p.dataset.id) > -1, pi = p.querySelector('.pin-img');
+        p.classList.toggle('viewed', seen); p.classList.add('animated'); p.classList.remove('swiveling');
+        p.setAttribute('aria-pressed', 'false');
+        if (p.dataset.baseLabel) p.setAttribute('aria-label', p.dataset.baseLabel + (seen ? ' (visited)' : ''));
+        if (pi) pi.src = seen ? 'Resources/PastedVector-43.svg' : 'Resources/PastedVector-25.svg';
+        if (seen) viewedMap.add(p.dataset.id);
+      });
+      desktopCompletionShown = s.phase === 'done' || viewedMap.size === 7;
+      coverView.classList.add('hidden');
+      var mf = document.getElementById('map-canvas-frame'); if (mf) { mf.classList.remove('map-enter'); mf.style.opacity = '1'; mf.style.transform = 'none'; }
+      if (s.phase === 'intro') { introModal.classList.add('active'); syncInert(); window.ceFocusText(introModal); }
+      else if (s.phase === 'done') { completionModal.classList.add('active'); syncInert(); window.ceFocusText(completionModal); }
+      else if (s.phase === 'biblio') { modalOpener = document.getElementById('btn-biblio'); biblioOverlay.classList.add('active'); syncInert(); var bh = document.getElementById('bib-heading'); if (bh) window.ceFocusFinal(bh); }
+      else if (s.phase === 'card' && s.id) { var pin = document.querySelector('.pin-btn[data-id="' + s.id + '"]'); syncInert(); if (pin) pin.click(); }
+      else { syncInert(); var p0 = document.querySelector('.pin-btn'); if (p0) window.ceFocusFinal(p0); }
+    };
+
     // 5. HEADER & COMPLETION CONTROLS
     document.getElementById('btn-biblio').addEventListener('click', () => {
       modalOpener = document.activeElement;
@@ -2166,6 +2202,16 @@ html.cv-skip .cover-title,html.cv-skip .btn-start,html.cv-skip .m-cover-title,ht
       var root = document.documentElement;
       var w = root.clientWidth || window.innerWidth;
       var t = tierFor(w);
+      var prevT = tier;
+      if (prevT && (prevT === 'mobile') !== (t === 'mobile')) {
+        try {
+          var st = prevT === 'mobile' ? window.ceMobGet() : window.ceDeskGet();
+          tier = t;
+          root.classList.toggle('mobile', t === 'mobile');
+          root.classList.toggle('tablet', t === 'tablet');
+          if (t === 'mobile') window.ceMobSet(st); else window.ceDeskSet(st);
+        } catch (e) {}
+      }
       tier = t;
       root.classList.toggle('mobile', t === 'mobile');
       root.classList.toggle('tablet', t === 'tablet');
@@ -2433,6 +2479,7 @@ html.cv-skip .cover-title,html.cv-skip .btn-start,html.cv-skip .m-cover-title,ht
       function go(n, userAction) {
         n = Math.max(0, Math.min(ids.length - 1, n));
         var goingPrev = n < current;
+        if (userAction) fromMap = false;
         current = n;
         slideEls.forEach(function (s, i) {
           s.classList.remove('active', 'dir-prev');
@@ -2565,6 +2612,34 @@ html.cv-skip .cover-title,html.cv-skip .btn-start,html.cv-skip .m-cover-title,ht
         if (e.key === 'ArrowRight') go(current + 1, true);
         else if (e.key === 'ArrowLeft') go(current - 1, true);
       });
+
+      var fromMap = false;
+      window.ceMobGet = function () {
+        var v = app.getAttribute('data-view') || 'cover', ph = 'card';
+        if (v === 'cover') ph = 'cover'; else if (v === 'biblio') ph = 'biblio';
+        else if (complete.classList.contains('active')) ph = 'done';
+        else if (intro.classList.contains('active')) ph = 'intro';
+        if (ph === 'card' && fromMap) ph = 'map';
+        return { phase: ph, id: ids[current], viewed: Array.from(viewed) };
+      };
+      window.ceMobSet = function (s) {
+        if (s.phase === 'cover') { if (app.getAttribute('data-view') !== 'cover') resetAll(); return; }
+        clearTimeout(completeTimer); fromMap = s.phase === 'map';
+        complete.classList.remove('active'); intro.classList.remove('active');
+        var n = s.id ? ids.indexOf(s.id) : -1;
+        go(n < 0 ? current : n, false);
+        viewed.clear(); s.viewed.forEach(function (i) { viewed.add(i); });
+        completeShown = s.phase === 'done';
+        go(current, false); viewed.clear(); s.viewed.forEach(function (i) { viewed.add(i); });
+        if (s.phase === 'biblio') setView('biblio'); else setView('slides');
+        if (s.phase === 'intro') { intro.classList.add('active'); }
+        if (s.phase === 'done') { complete.classList.add('active'); }
+        syncMobileInert();
+        if (s.phase === 'intro') window.ceFocusText(intro);
+        else if (s.phase === 'done') window.ceFocusText(complete);
+        else if (s.phase === 'biblio') { var bh = document.querySelector('#m-biblio-view h2'); if (bh) { bh.setAttribute('tabindex', '-1'); window.ceFocusFinal(bh); } }
+        else { var h2 = slideEls[current].querySelector('h2'); if (h2) window.ceFocusFinal(h2); }
+      };
 
       go(0, false);
       setView('cover');
