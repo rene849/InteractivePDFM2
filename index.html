@@ -683,6 +683,10 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;touch-acti
   transform:scale(1.17);
   transform-origin:50.7% 51.7%;
 }
+/* the red India-China line is drawn over the artwork, so it takes the same zoom, anchored on the pin tip (50.8% / 53.1% of the circle);
+   the stroke is divided by the zoom so it keeps its 1.6 thickness */
+.spotlight-view-container.zoom-map #spotlight-ic-leader{transform:scale(var(--ic-zoom,1.17));transform-origin:50.8% 53.1%;}
+.spotlight-view-container.zoom-map #spotlight-ic-leader polyline{stroke-width:calc(1.6px / var(--ic-zoom,1.17));}
 
 /* CENTER MODAL (Intro & Completion — matched to M5) */
 .center-modal{
@@ -1948,6 +1952,7 @@ html.cv-skip .cover-title,html.cv-skip .btn-start,html.cv-skip .m-cover-title,ht
           }
           spotlightContainer.className = "spotlight-view-container " + (data.layoutClass || "");
 
+          clearTimeout(spotlightClearTimer);   /* a card opened right after another closed must keep its artwork and red line */
           activePin = btn;
           currentRegionId = id;
           cardExpanded = false;
@@ -1966,6 +1971,7 @@ html.cv-skip .cover-title,html.cv-skip .btn-start,html.cv-skip .m-cover-title,ht
     });
 
     // 4. CLOSE DIALOG - TRIGGER SWIVEL AND CLEAR SPOTLIGHT IMAGE
+    let spotlightClearTimer = null;
     function closeSpotlightDialog() {
       if (!contentModal.classList.contains('active')) return;
       const closedPin = activePin;
@@ -1991,7 +1997,8 @@ html.cv-skip .cover-title,html.cv-skip .btn-start,html.cv-skip .m-cover-title,ht
       contentModal.classList.remove('active');
       syncInert();
       
-      setTimeout(() => {
+      clearTimeout(spotlightClearTimer);
+      spotlightClearTimer = setTimeout(() => {
         spotlightMapBg.src = '';
         if (spotlightIcLeader) spotlightIcLeader.style.display = 'none';
       }, 300);
