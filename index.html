@@ -347,6 +347,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;touch-acti
   transition:transform .2s cubic-bezier(.25,1,.5,1);
   backface-visibility:hidden;
 }
+@media(min-width:880px){.pin-btn{display:flex;align-items:flex-end;justify-content:center;min-width:24px;min-height:24px;padding:0;}}   /* WCAG 2.5.8 target size; narrower than this the Turkey and Syria pins sit too close together for 24px boxes */
 .pin-btn.animated{
   animation:pinPop .4s cubic-bezier(.175,.885,.32,1.275) forwards;
 }
@@ -683,10 +684,8 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;touch-acti
   transform:scale(1.17);
   transform-origin:50.7% 51.7%;
 }
-/* the red India-China line is drawn over the artwork, so it takes the same zoom, anchored on the pin tip (50.8% / 53.1% of the circle);
-   the stroke is divided by the zoom so it keeps its 1.6 thickness */
-.spotlight-view-container.zoom-map #spotlight-ic-leader{transform:scale(var(--ic-zoom,1.17));transform-origin:50.8% 53.1%;}
-.spotlight-view-container.zoom-map #spotlight-ic-leader polyline{stroke-width:calc(1.6px / var(--ic-zoom,1.17));}
+/* the red India-China line is drawn in the finished circle (after the artwork zoom), so no zoom is applied to it. It starts at the pin tip
+   (50.9% / 52.1% of the circle) and follows the original: 2.5 units straight down, then 2.8 left and 3.3 down across the navy border line */
 
 /* CENTER MODAL (Intro & Completion — matched to M5) */
 .center-modal{
@@ -1266,7 +1265,7 @@ html.cv-skip .cover-title,html.cv-skip .btn-start,html.cv-skip .m-cover-title,ht
         <div class="spotlight-circle-frame" id="spotlight-circle" aria-hidden="true">
           <img src="" id="spotlight-map-bg" alt="" class="spotlight-map-bg">
           <svg id="spotlight-ic-leader" viewBox="0 0 132 132" style="position:absolute;inset:0;width:100%;height:100%;z-index:332;pointer-events:none;display:none;" aria-hidden="true">
-            <polyline points="67,70 66.5,79 62,84" fill="none" stroke="#E3120B" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <polyline points="67.2,68.8 67.2,71.3 64.4,74.6" fill="none" stroke="#E3120B" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
           <img src="Resources/PastedVector-25.svg" alt="" class="spotlight-pin-icon">
         </div>
