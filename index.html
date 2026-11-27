@@ -334,6 +334,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;touch-acti
   pointer-events:none;
 }
 .map-leader.active{opacity:1;}
+.map-leader.is-viewed{stroke:var(--blue-accent);}   /* visited pin (blue) > the hover line is blue too, not red */
 
 .pin-btn{
   position:absolute;
@@ -1918,7 +1919,7 @@ html.cv-skip .cover-title,html.cv-skip .btn-start,html.cv-skip .m-cover-title,ht
         if (data && data.highlightId) {
           const el = document.getElementById(data.highlightId);
           if (el) el.classList.add('active');
-          if (id === 'indiachina' && icLeader) icLeader.classList.add('active');
+          if (id === 'indiachina' && icLeader) { icLeader.classList.toggle('is-viewed', pin.classList.contains('viewed')); icLeader.classList.add('active'); }
         }
       };
       const hideHl = () => {
